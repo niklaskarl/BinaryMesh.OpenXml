@@ -1,0 +1,54 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26124.0
+MinimumVisualStudioVersion = 15.0.26124.0
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0DE2380E-E954-46EA-A390-9B92490929A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryMesh.OpenXml.Explorer", "src\BinaryMesh.OpenXml.Explorer\BinaryMesh.OpenXml.Explorer.csproj", "{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryMesh.OpenXml", "src\BinaryMesh.OpenXml\BinaryMesh.OpenXml.csproj", "{FD7A5D51-663C-4981-A30A-6E3089201AF3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Debug|x64.Build.0 = Debug|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Debug|x86.Build.0 = Debug|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Release|x64.ActiveCfg = Release|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Release|x64.Build.0 = Release|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Release|x86.ActiveCfg = Release|Any CPU
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5}.Release|x86.Build.0 = Release|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Debug|x64.Build.0 = Debug|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Debug|x86.Build.0 = Debug|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Release|x64.ActiveCfg = Release|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Release|x64.Build.0 = Release|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Release|x86.ActiveCfg = Release|Any CPU
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4CAF823A-F594-4965-98AF-6FA10EA3C2D5} = {0DE2380E-E954-46EA-A390-9B92490929A6}
+		{FD7A5D51-663C-4981-A30A-6E3089201AF3} = {0DE2380E-E954-46EA-A390-9B92490929A6}
+	EndGlobalSection
+EndGlobal
