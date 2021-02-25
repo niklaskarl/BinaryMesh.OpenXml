@@ -150,10 +150,10 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 
         private static string GetColumnCharsFromIndex(uint column)
         {
-            string result = ((char)('A' + (column - 1) % ('Z' - 'A' + 1))).ToString();
-            while((column = (column - 1) / ('Z' - 'A' + 1)) > 0)
+            string result = ((char)('A' + (column) % ('Z' - 'A' + 1))).ToString();
+            while((column = (column) / ('Z' - 'A' + 1)) > 0)
             {
-                result = ((char)('A' + (column - 1) % ('Z' - 'A' + 1))) + result;
+                result = ((char)('A' + (column) % ('Z' - 'A' + 1))) + result;
             }
 
             return result;
@@ -173,7 +173,12 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
                 ++i;
             }
 
-            while ((reference[i] >= 'A' && reference[i] <= 'Z') || (reference[i] >= 'a' || reference[i] <= 'z'))
+            if (!(i < reference.Length && ((reference[i] >= 'A' && reference[i] <= 'Z') || (reference[i] >= 'a' && reference[i] <= 'z'))))
+            {
+                return false;
+            }
+
+            while (i < reference.Length && ((reference[i] >= 'A' && reference[i] <= 'Z') || (reference[i] >= 'a' && reference[i] <= 'z')))
             {
                 if (reference[i] < 'a')
                 {
@@ -189,7 +194,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
                 ++i;
             }
 
-            if (column == 0)
+            if (i == reference.Length)
             {
                 return false;
             }
@@ -198,6 +203,11 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             {
                 isRowFixed = true;
                 ++i;
+            }
+
+            if (i == reference.Length)
+            {
+                return false;
             }
 
             if (!uint.TryParse(reference.Substring(i), out row))
