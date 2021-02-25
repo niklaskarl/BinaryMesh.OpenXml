@@ -5,13 +5,13 @@ using Drawing = DocumentFormat.OpenXml.Drawing;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class ShapeVisualRef : IShapeVisual, IVisualRef, IVisual
+    internal sealed class OpenXmlShapeVisual : IShapeVisual, IOpenXmlVisual, IVisual
     {
-        private readonly IPresentationRef presentation;
+        private readonly IOpenXmlPresentation presentation;
 
         private readonly Shape shape;
 
-        public ShapeVisualRef(IPresentationRef presentation, Shape shape)
+        public OpenXmlShapeVisual(IOpenXmlPresentation presentation, Shape shape)
         {
             this.presentation = presentation;
             this.shape = shape;

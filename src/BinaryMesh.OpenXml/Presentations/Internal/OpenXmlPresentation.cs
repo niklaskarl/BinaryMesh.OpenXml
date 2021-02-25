@@ -7,10 +7,11 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 
 using BinaryMesh.OpenXml.Helpers;
+using BinaryMesh.OpenXml.Spreadsheets;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal class PresentationRef : IPresentationRef, IPresentation, IDisposable
+    internal class OpenXmlPresentation : IOpenXmlPresentation, IPresentation, IDisposable
     {
         private readonly Stream stream;
 
@@ -18,7 +19,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         private readonly PresentationPart presentationPart;
 
-        public PresentationRef(Stream template)
+        public OpenXmlPresentation(Stream template)
         {
             /*this.stream = new MemoryStream();
             this.presentationDocument = PresentationDocument.Create(stream, PresentationDocumentType.Presentation);
@@ -52,7 +53,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public IReadOnlyList<ISlideMaster> SlideMasters => new EnumerableList<SlideMasterId, ISlideMaster>(
             this.presentationPart.Presentation.SlideMasterIdList.Elements<SlideMasterId>(),
-            sm => new SlideMasterRef(this, this.presentationPart.GetPartById(sm.RelationshipId) as SlideMasterPart)
+            sm => new OpenXmlSlideMaster(this, this.presentationPart.GetPartById(sm.RelationshipId) as SlideMasterPart)
         );
 
         public IReadOnlyList<ISlide> Slides => throw new NotImplementedException();
@@ -64,7 +65,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public ISlide InsertSlide(ISlideLayout slideLayout, int index)
         {
-            if (!(slideLayout is ISlideLayoutRef slideLayoutRef))
+            if (!(slideLayout is IOpenXmlSlideLayout slideLayoutRef))
             {
                 throw new ArgumentException();
             }
@@ -84,7 +85,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
             slide.CommonSlideData.ShapeTree.Append(
                 slideLayoutRef.SlideLayoutPart.SlideLayout.CommonSlideData.ShapeTree
-                    .Select(element => VisualFactory.TryCreateVisual(this, element, out IVisualRef visual) ? visual : null).Where(visual => visual != null)
+                    .Select(element => OpenXmlVisualFactory.TryCreateVisual(this, element, out IOpenXmlVisual visual) ? visual : null).Where(visual => visual != null)
                     .Where(visual => visual?.IsPlaceholder ?? false)
                     .Select(visual => visual.CloneForSlide())
             );
@@ -100,13 +101,23 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             }
 
             SlideIdList slideIdList = this.presentationPart.Presentation.SlideIdList;
-            SlideId refSlideId = slideIdList.Elements<SlideId>().Skip(index).FirstOrDefault();
+            SlideId refSlideId = slideIdList.Elements<SlideId>().Take(index).LastOrDefault();
 
             uint id = refSlideId?.Id ?? 256;
-            SlideId slideId = slideIdList.InsertAfter(
-                new SlideId() { Id = ++id, RelationshipId = presentationPart.GetIdOfPart(slidePart) },
-                refSlideId
-            );
+            SlideId slideId;
+            if (refSlideId != null)
+            {
+                slideId = slideIdList.InsertAfter(
+                    new SlideId() { Id = ++id, RelationshipId = presentationPart.GetIdOfPart(slidePart) },
+                    refSlideId
+                );
+            }
+            else
+            {
+                slideId = slideIdList.PrependChild(
+                    new SlideId() { Id = ++id, RelationshipId = presentationPart.GetIdOfPart(slidePart) }
+                );
+            }
             
             for (slideId = slideId.NextSibling<SlideId>(); slideId != null; slideId = slideId.NextSibling<SlideId>())
             {
@@ -116,10 +127,10 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             // TODO: check if this is really required
             this.presentationPart.Presentation.Save(presentationPart);
 
-            return new SlideRef(this, slidePart);
+            return new OpenXmlSlide(this, slidePart);
         }
 
-        public IChart CreateChart()
+        public IChartSpace CreateChartSpace()
         {
             ChartPart chartPart = this.presentationPart.AddNewPartDefaultId<ChartPart>();
             

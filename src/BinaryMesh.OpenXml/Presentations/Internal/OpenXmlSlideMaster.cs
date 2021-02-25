@@ -7,13 +7,13 @@ using BinaryMesh.OpenXml.Helpers;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class SlideMasterRef : ISlideMasterRef, ISlideMaster
+    internal sealed class OpenXmlSlideMaster : IOpenXmlSlideMaster, ISlideMaster
     {
-        private readonly IPresentationRef presentation;
+        private readonly IOpenXmlPresentation presentation;
 
         private readonly SlideMasterPart slideMasterPart;
 
-        public SlideMasterRef(IPresentationRef presentation, SlideMasterPart slideMasterPart)
+        public OpenXmlSlideMaster(IOpenXmlPresentation presentation, SlideMasterPart slideMasterPart)
         {
             this.presentation = presentation;
             this.slideMasterPart = slideMasterPart;
@@ -23,7 +23,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public IReadOnlyList<ISlideLayout> SlideLayouts => new EnumerableList<SlideLayoutId, ISlideLayout>(
             this.slideMasterPart.SlideMaster.SlideLayoutIdList.Elements<SlideLayoutId>(),
-            sl => new SlideLayoutRef(this.presentation, this.slideMasterPart.GetPartById(sl.RelationshipId) as SlideLayoutPart)
+            sl => new OpenXmlSlideLayout(this.presentation, this.slideMasterPart.GetPartById(sl.RelationshipId) as SlideLayoutPart)
         );
     }
 }

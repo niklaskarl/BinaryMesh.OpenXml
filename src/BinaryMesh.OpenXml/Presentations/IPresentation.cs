@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+using BinaryMesh.OpenXml.Spreadsheets;
+
 namespace BinaryMesh.OpenXml.Presentations
 {
     public interface IPresentation : IDisposable
@@ -14,7 +16,7 @@ namespace BinaryMesh.OpenXml.Presentations
 
         ISlide InsertSlide(ISlideLayout layout, int index);
 
-        IChart CreateChart();
+        IChartSpace CreateChartSpace();
 
         void Close(Stream destination);
     }

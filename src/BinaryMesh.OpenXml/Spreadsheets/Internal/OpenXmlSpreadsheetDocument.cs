@@ -1,47 +1,43 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using DocumentFormat.OpenXml;
-using Packaging = DocumentFormat.OpenXml.Packaging;
-
-using BinaryMesh.OpenXml.Helpers;
+using DocumentFormat.OpenXml.Packaging;
 
 namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 {
-    internal class SpreadsheetDocument : ISpreadsheetDocument, IDisposable
+    internal class OpenXmlSpreadsheetDocument : ISpreadsheetDocument, IDisposable
     {
         private readonly Stream stream;
 
         private readonly bool keepStreamOpen;
 
-        private readonly Packaging.SpreadsheetDocument spreadsheetDocument;
+        private readonly SpreadsheetDocument spreadsheetDocument;
 
-        public SpreadsheetDocument()
+        public OpenXmlSpreadsheetDocument()
         {
             this.stream = new MemoryStream();
             this.keepStreamOpen = false;
 
-            this.spreadsheetDocument = Packaging.SpreadsheetDocument.Create(this.stream, SpreadsheetDocumentType.Workbook);
+            this.spreadsheetDocument = SpreadsheetDocument.Create(this.stream, SpreadsheetDocumentType.Workbook);
         }
 
-        public SpreadsheetDocument(Stream stream)
+        public OpenXmlSpreadsheetDocument(Stream stream)
         {
             this.stream = stream;
             this.keepStreamOpen = false;
 
-            this.spreadsheetDocument = Packaging.SpreadsheetDocument.Open(this.stream, true);
+            this.spreadsheetDocument = SpreadsheetDocument.Open(this.stream, true);
         }
 
-        public SpreadsheetDocument(Stream stream, bool keepStreamOpen)
+        public OpenXmlSpreadsheetDocument(Stream stream, bool keepStreamOpen)
         {
             this.stream = stream;
             this.keepStreamOpen = keepStreamOpen;
 
-            this.spreadsheetDocument = Packaging.SpreadsheetDocument.Open(this.stream, true);
+            this.spreadsheetDocument = SpreadsheetDocument.Open(this.stream, true);
         }
 
-        public IWorkbook Workbook => new Workbook(this.spreadsheetDocument.WorkbookPart ?? this.spreadsheetDocument.AddWorkbookPart());
+        public IWorkbook Workbook => new OpenXmlWorkbook(this.spreadsheetDocument.WorkbookPart ?? this.spreadsheetDocument.AddWorkbookPart());
 
         public void Close(Stream destination)
         {

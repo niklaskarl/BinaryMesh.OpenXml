@@ -4,13 +4,13 @@ using DocumentFormat.OpenXml.Presentation;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class GraphicFrameVisualRef : IVisualRef, IVisual
+    internal sealed class OpenXmlGraphicFrameVisual : IOpenXmlVisual, IVisual
     {
-        private readonly IPresentationRef presentation;
+        private readonly IOpenXmlPresentation presentation;
 
         private readonly GraphicFrame graphicFrame;
 
-        public GraphicFrameVisualRef(IPresentationRef presentation, GraphicFrame graphicFrame)
+        public OpenXmlGraphicFrameVisual(IOpenXmlPresentation presentation, GraphicFrame graphicFrame)
         {
             this.presentation = presentation;
             this.graphicFrame = graphicFrame;

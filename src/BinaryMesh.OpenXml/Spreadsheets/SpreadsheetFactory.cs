@@ -8,7 +8,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets
     {
         public static ISpreadsheetDocument CreateSpreadsheet()
         {
-            return new SpreadsheetDocument();
+            return new OpenXmlSpreadsheetDocument();
         }
 
         public static ISpreadsheetDocument OpenSpreadsheet(string source)
@@ -20,7 +20,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets
                 stream.Seek(0, SeekOrigin.Begin);
             }
             
-            return new SpreadsheetDocument(stream);
+            return new OpenXmlSpreadsheetDocument(stream);
         }
 
         public static ISpreadsheetDocument OpenSpreadsheet(Stream sourceStream)
@@ -29,7 +29,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets
             sourceStream.CopyTo(stream);
             stream.Seek(0, SeekOrigin.Begin);
             
-            return new SpreadsheetDocument(stream);
+            return new OpenXmlSpreadsheetDocument(stream);
         }
     }
 }

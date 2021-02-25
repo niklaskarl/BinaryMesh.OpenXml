@@ -1,18 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using DocumentFormat.OpenXml;
-using Packaging = DocumentFormat.OpenXml.Packaging;
-using Spreadsheet = DocumentFormat.OpenXml.Spreadsheet;
-
-using BinaryMesh.OpenXml.Helpers;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 {
-    internal sealed class Cell : ICell
+    internal sealed class OpenXmlCell : ICell
     {
-        private readonly Worksheet worksheet;
+        private readonly OpenXmlWorksheet worksheet;
 
         private readonly uint column;
 
@@ -22,7 +16,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 
         private readonly bool isRowFixed;
 
-        public Cell(Worksheet worksheet, uint column, uint row)
+        public OpenXmlCell(OpenXmlWorksheet worksheet, uint column, uint row)
         {
             this.worksheet = worksheet;
             this.column = column;
@@ -31,7 +25,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             this.isRowFixed = false;
         }
 
-        public Cell(Worksheet worksheet, uint column, bool isColumnFixed, uint row, bool isRowFixed)
+        public OpenXmlCell(OpenXmlWorksheet worksheet, uint column, bool isColumnFixed, uint row, bool isRowFixed)
         {
             this.worksheet = worksheet;
             this.column = column;
@@ -50,11 +44,11 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 
         public string Reference => $"{(this.isColumnFixed ? "$" : "")}{GetColumnCharsFromIndex(this.column)}{(this.isRowFixed ? "$" : "")}{this.row + 1}";
 
-        public static bool TryCreateCell(Worksheet worksheet, string reference, out Cell cell)
+        public static bool TryCreateCell(OpenXmlWorksheet worksheet, string reference, out OpenXmlCell cell)
         {
             if (TryDecodeCellReference(reference, out uint column, out bool isColumnFixed, out uint row, out bool isRowFixed))
             {
-                cell = new Cell(worksheet, column, isColumnFixed, row, isRowFixed);
+                cell = new OpenXmlCell(worksheet, column, isColumnFixed, row, isRowFixed);
                 return true;
             }
             else
@@ -66,32 +60,32 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 
         public ICell SetValue(double value)
         {
-            Spreadsheet.Cell cell = this.GetOrCreateInternalCell();
-            cell.DataType = Spreadsheet.CellValues.Number;
-            cell.CellValue = new Spreadsheet.CellValue(value);
+            Cell cell = this.GetOrCreateInternalCell();
+            cell.DataType = CellValues.Number;
+            cell.CellValue = new CellValue(value);
 
             return this;
         }
 
         public ICell SetValue(string value)
         {
-            Spreadsheet.Cell cell = this.GetOrCreateInternalCell();
-            cell.DataType = Spreadsheet.CellValues.String;
-            cell.CellValue = new Spreadsheet.CellValue(value);
+            Cell cell = this.GetOrCreateInternalCell();
+            cell.DataType = CellValues.String;
+            cell.CellValue = new CellValue(value);
 
             return this;
         }
 
-        private Spreadsheet.Cell GetInternalCell()
+        private Cell GetInternalCell()
         {
-            Spreadsheet.SheetData sheetData = this.worksheet.WorksheetPart.Worksheet.GetFirstChild<Spreadsheet.SheetData>();
-            Spreadsheet.Row row = sheetData.Elements<Spreadsheet.Row>()
+            SheetData sheetData = this.worksheet.WorksheetPart.Worksheet.GetFirstChild<SheetData>();
+            Row row = sheetData.Elements<Row>()
                 .SkipWhile(r => r.RowIndex - 1 < this.row)
                 .FirstOrDefault();
 
             if (row != null && row.RowIndex - 1 == this.row)
             {
-                Spreadsheet.Cell cell = row.Elements<Spreadsheet.Cell>()
+                Cell cell = row.Elements<Cell>()
                     .SkipWhile(c => !TryDecodeCellReference(c.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex < this.column)
                     .FirstOrDefault();
 
@@ -106,28 +100,28 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             return null;
         }
 
-        private Spreadsheet.Cell GetOrCreateInternalCell()
+        private Cell GetOrCreateInternalCell()
         {
-            Spreadsheet.SheetData sheetData = this.worksheet.WorksheetPart.Worksheet.GetFirstChild<Spreadsheet.SheetData>();
-            Spreadsheet.Row row = sheetData.Elements<Spreadsheet.Row>()
+            SheetData sheetData = this.worksheet.WorksheetPart.Worksheet.GetFirstChild<SheetData>();
+            Row row = sheetData.Elements<Row>()
                 .SkipWhile(r => r.RowIndex - 1 < this.row)
                 .FirstOrDefault();
 
-            Spreadsheet.Cell cell;
+            Cell cell;
             if (row != null && row.RowIndex - 1 == this.row)
             {
-                cell = row.Elements<Spreadsheet.Cell>()
+                cell = row.Elements<Cell>()
                     .SkipWhile(c => !TryDecodeCellReference(c.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex < this.column)
                     .FirstOrDefault();
 
                 {
                     if (cell == null)
                     {
-                        cell = row.AppendChild(new Spreadsheet.Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" });
+                        cell = row.AppendChild(new Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" });
                     }
                     else if (!TryDecodeCellReference(cell.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex != this.column)
                     {
-                        cell = row.InsertBefore(new Spreadsheet.Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" }, cell);
+                        cell = row.InsertBefore(new Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" }, cell);
                     }
                 }
             }
@@ -135,14 +129,14 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             {
                 if (row != null)
                 {
-                    row = sheetData.InsertBefore(new Spreadsheet.Row() { RowIndex = this.row + 1 }, row);
+                    row = sheetData.InsertBefore(new Row() { RowIndex = this.row + 1 }, row);
                 }
                 else
                 {
-                    row = sheetData.AppendChild(new Spreadsheet.Row() { RowIndex = this.row + 1 });
+                    row = sheetData.AppendChild(new Row() { RowIndex = this.row + 1 });
                 }
 
-                cell = row.AppendChild(new Spreadsheet.Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" });
+                cell = row.AppendChild(new Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" });
             }
 
             return cell;

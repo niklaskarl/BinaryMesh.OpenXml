@@ -3,7 +3,7 @@ using DocumentFormat.OpenXml;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal interface IVisualRef : IVisual
+    internal interface IOpenXmlVisual : IVisual
     {
         bool IsPlaceholder { get; }
 

@@ -2,7 +2,7 @@ using System;
 
 namespace BinaryMesh.OpenXml.Presentations
 {
-    public interface IChart
+    public interface IPieChart : IChart
     {
     }
 }

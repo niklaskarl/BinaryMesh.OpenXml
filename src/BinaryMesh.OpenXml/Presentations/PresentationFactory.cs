@@ -8,20 +8,20 @@ namespace BinaryMesh.OpenXml.Presentations
     {
         public static IPresentation CreatePresentation()
         {
-            return new PresentationRef(null);
+            return new OpenXmlPresentation(null);
         }
 
         public static IPresentation CreatePresentation(string template)
         {
             using (Stream templateStream = new FileStream(template, FileMode.Open, FileAccess.Read))
             {
-                return new PresentationRef(templateStream);
+                return new OpenXmlPresentation(templateStream);
             }
         }
 
         public static IPresentation CreatePresentation(Stream templateStream)
         {
-            return new PresentationRef(templateStream);
+            return new OpenXmlPresentation(templateStream);
         }
     }
 }
