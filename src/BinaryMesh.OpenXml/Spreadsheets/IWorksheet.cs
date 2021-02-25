@@ -4,6 +4,10 @@ namespace BinaryMesh.OpenXml.Spreadsheets
 {
     public interface IWorksheet
     {
+        string Name { get; }
+
         IWorksheetCells Cells { get; }
+
+        IRange GetRange(string formula);
     }
 }

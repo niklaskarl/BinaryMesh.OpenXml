@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using Charts = DocumentFormat.OpenXml.Drawing.Charts;
 
 using BinaryMesh.OpenXml.Helpers;
 
@@ -27,5 +28,17 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             visual => visual.Name,
             visual => visual
         );
+
+        public IChartSpace CreateChartSpace()
+        {
+            ChartPart chartPart = this.slidePart.AddNewPartDefaultId<ChartPart>();
+            chartPart.ChartSpace = new Charts.ChartSpace()
+            {
+                Date1904 = new Charts.Date1904() { Val = false }
+            }
+                .AppendChildFluent(new Charts.Chart());
+
+            return new OpenXmlChartSpace(chartPart);
+        }
     }
 }

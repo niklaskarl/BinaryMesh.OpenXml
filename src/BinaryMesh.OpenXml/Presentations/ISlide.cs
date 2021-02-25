@@ -7,5 +7,7 @@ namespace BinaryMesh.OpenXml.Presentations
         int Index { get; }
 
         KeyedReadOnlyList<string, IVisual> VisualTree { get; }
+
+        IChartSpace CreateChartSpace();
     }
 }

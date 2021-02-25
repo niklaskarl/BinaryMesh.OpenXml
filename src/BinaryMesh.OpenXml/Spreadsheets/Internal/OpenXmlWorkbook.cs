@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
 using BinaryMesh.OpenXml.Helpers;
+using BinaryMesh.OpenXml.Spreadsheets.Helpers;
 
 namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 {
@@ -25,10 +26,23 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             }
         }
 
+        public WorkbookPart WorkbookPart => this.workbookPart;
+
+        public OpenXmlWorksheet GetWorksheet(string name)
+        {
+            Sheet sheet = this.workbookPart.Workbook.Sheets.Elements<Sheet>().FirstOrDefault(s => s.Name == name);
+            if (sheet != null)
+            {
+                return new OpenXmlWorksheet(this, this.workbookPart.GetPartById(sheet.Id.Value) as WorksheetPart);
+            }
+
+            return null;
+        }
+
         public KeyedReadOnlyList<string, IWorksheet> Worksheets => new EnumerableKeyedList<Sheet, string, IWorksheet>(
             this.workbookPart.Workbook.Sheets.Elements<Sheet>(),
             sheet => sheet.Name,
-            sheet => new OpenXmlWorksheet(this.workbookPart.GetPartById(sheet.Id.Value) as WorksheetPart)
+            sheet => new OpenXmlWorksheet(this, this.workbookPart.GetPartById(sheet.Id.Value) as WorksheetPart)
         );
 
         public IWorksheet AppendWorksheet(string name)
@@ -73,7 +87,42 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
                 ++sheetId;
             }
 
-            return new OpenXmlWorksheet(worksheetPart);
+            return new OpenXmlWorksheet(this, worksheetPart);
+        }
+
+        public IRange GetRange(string formula)
+        {
+            bool result = ReferenceDecoder.TryDecodeRangeReference(
+                formula,
+                out string worksheetName,
+                out uint? startColumn, out bool isStartColumnFixed,
+                out uint? startRow, out bool isStartRowFixed,
+                out uint? endColumn, out bool isEndColumnFixed,
+                out uint? endRow, out bool isEndRowFixed
+            );
+
+            if (!result)
+            {
+                throw new FormatException();
+            }
+
+            if (worksheetName == null)
+            {
+                throw new ArgumentException("No worksheet specified");
+            }
+
+            if (!this.Worksheets.TryGetValue(worksheetName, out IWorksheet worksheet))
+            {
+                throw new ArgumentException("Invalid worksheet name.");
+            }
+
+            return new OpenXmlRange(
+                worksheet as OpenXmlWorksheet,
+                startColumn, isStartColumnFixed,
+                startRow, isStartRowFixed,
+                endColumn, isEndColumnFixed,
+                endRow, isEndRowFixed
+            );
         }
     }
 }

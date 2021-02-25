@@ -21,20 +21,24 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             this.spreadsheetDocument = SpreadsheetDocument.Create(this.stream, SpreadsheetDocumentType.Workbook);
         }
 
-        public OpenXmlSpreadsheetDocument(Stream stream)
+        public OpenXmlSpreadsheetDocument(Stream stream, bool initialize)
         {
             this.stream = stream;
             this.keepStreamOpen = false;
 
-            this.spreadsheetDocument = SpreadsheetDocument.Open(this.stream, true);
+            this.spreadsheetDocument = initialize ?
+                SpreadsheetDocument.Create(this.stream, SpreadsheetDocumentType.Workbook) :
+                SpreadsheetDocument.Open(this.stream, true);
         }
 
-        public OpenXmlSpreadsheetDocument(Stream stream, bool keepStreamOpen)
+        public OpenXmlSpreadsheetDocument(Stream stream, bool initialize, bool keepStreamOpen)
         {
             this.stream = stream;
             this.keepStreamOpen = keepStreamOpen;
 
-            this.spreadsheetDocument = SpreadsheetDocument.Open(this.stream, true);
+            this.spreadsheetDocument = initialize ?
+                SpreadsheetDocument.Create(this.stream, SpreadsheetDocumentType.Workbook) :
+                SpreadsheetDocument.Open(this.stream, true);
         }
 
         public IWorkbook Workbook => new OpenXmlWorkbook(this.spreadsheetDocument.WorkbookPart ?? this.spreadsheetDocument.AddWorkbookPart());

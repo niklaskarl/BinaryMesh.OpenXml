@@ -18,29 +18,30 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public ISpreadsheetDocument OpenSpreadsheetDocument()
         {
-            return new OpenXmlSpreadsheetDocument(this.chartPart.EmbeddedPackagePart.GetStream());
-        }
-
-        public void AddPieChart()
-        {
-            this.chartPart.ChartSpace.GetFirstChild<Chart>().PlotArea
-                .AppendChildFluent(
-                    new PieChart()
+            if (this.chartPart.EmbeddedPackagePart == null)
+            {
+                EmbeddedPackagePart embeddedPackagePart = this.chartPart.AddEmbeddedPackagePart("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                this.chartPart.ChartSpace
+                    .AppendChildFluent(new ExternalData()
                     {
-                        VaryColors = new VaryColors() { Val = true }
-                    }
-                        .AppendChildFluent(
-                            new DataLabels()
-                            {
-                                
-                            }
-                        )
-                );
+                        Id = this.chartPart.GetIdOfPart(embeddedPackagePart),
+                        AutoUpdate = new AutoUpdate() { Val = false }
+                    });
+
+                return new OpenXmlSpreadsheetDocument(embeddedPackagePart.GetStream(), true);
+            }
+            else
+            {
+                return new OpenXmlSpreadsheetDocument(this.chartPart.EmbeddedPackagePart.GetStream(), false);
+            }
         }
 
         public IPieChart InsertPieChart()
         {
-            throw new NotImplementedException();
+            ChartSpace chartSpace = this.chartPart.ChartSpace;
+            Chart chart = chartSpace.GetFirstChild<Chart>() ?? chartSpace.AppendChild(new Chart());
+            PlotArea plotArea = chart.PlotArea ?? (chart.PlotArea = new PlotArea());
+            return new OpenXmlPieChart(plotArea.AppendChild(new PieChart()));
         }
 
         public IBarChart InsertBarChart()

@@ -12,5 +12,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets
         IWorksheet InsertWorksheet(string name, int index);
 
         IWorksheet AppendWorksheet(string name);
+
+        IRange GetRange(string formula);
     }
 }

@@ -52,15 +52,36 @@ namespace BinaryMesh.OpenXml.Explorer
             using (presentation)
             {
                 ISlide slide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[0]);
+                slide.VisualTree["Titel 1"].AsShapeVisual().SetText("Automated Presentation Documents made easy");
+                slide.VisualTree["Untertitel 2"].AsShapeVisual().SetText("BinaryMesh.OpenXml is an open-source library to easily and intuitively create OpenXml documents");
+                slide.VisualTree["Datumsplatzhalter 3"].AsShapeVisual().SetText("10.10.2020");
 
-                slide.VisualTree["Titel 1"].AsShapeVisual()
-                    .SetText("Automated Presentation Documents made easy");
+                IChartSpace chartSpace = slide.CreateChartSpace();
+                using (ISpreadsheetDocument spreadsheet = chartSpace.OpenSpreadsheetDocument())
+                {
+                    IWorkbook workbook = spreadsheet.Workbook;
+                    IWorksheet sheet = workbook.AppendWorksheet("Sheet1");
 
-                slide.VisualTree["Untertitel 2"].AsShapeVisual()
-                    .SetText("BinaryMesh.OpenXml is an open-source library to easily and intuitively create OpenXml documents");
+                    sheet.Cells[0, 1].SetValue("Costs");
 
-                slide.VisualTree["Datumsplatzhalter 3"].AsShapeVisual()
-                    .SetText("10.10.2020");
+                    sheet.Cells[1, 0].SetValue("1. Quarter");
+                    sheet.Cells[2, 0].SetValue("2. Quarter");
+                    sheet.Cells[3, 0].SetValue("3. Quarter");
+                    sheet.Cells[4, 0].SetValue("4. Quarter");
+
+                    sheet.Cells[1, 1].SetValue(152306);
+                    sheet.Cells[2, 1].SetValue(128742);
+                    sheet.Cells[3, 1].SetValue(218737);
+                    sheet.Cells[4, 1].SetValue(187025);
+
+                    IPieChart pieChart = chartSpace.InsertPieChart();
+                    pieChart.Series
+                        .SetText(workbook.GetRange("Sheet1!$A$2"))
+                        .SetCategoryAxis(workbook.GetRange("Sheet1!$A$1:$D$1"))
+                        .SetValueAxis(workbook.GetRange("Sheet1!$A$2:$D$2"));
+                }
+
+                // TODO: add chart to slide
 
                 using (Stream stream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite))
                 {

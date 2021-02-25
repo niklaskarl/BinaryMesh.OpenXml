@@ -16,8 +16,6 @@ namespace BinaryMesh.OpenXml.Presentations
 
         ISlide InsertSlide(ISlideLayout layout, int index);
 
-        IChartSpace CreateChartSpace();
-
         void Close(Stream destination);
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
+using Charts = DocumentFormat.OpenXml.Drawing.Charts;
 
 using BinaryMesh.OpenXml.Helpers;
 using BinaryMesh.OpenXml.Spreadsheets;
@@ -124,18 +125,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 slideId.Id = ++id;
             }
 
-            // TODO: check if this is really required
-            this.presentationPart.Presentation.Save(presentationPart);
-
             return new OpenXmlSlide(this, slidePart);
-        }
-
-        public IChartSpace CreateChartSpace()
-        {
-            ChartPart chartPart = this.presentationPart.AddNewPartDefaultId<ChartPart>();
-            
-
-            return null;
         }
 
         public void Close(Stream destination)

@@ -4,5 +4,6 @@ namespace BinaryMesh.OpenXml.Presentations
 {
     public interface IBarChart : IChart
     {
+        IChartSeries Series { get; }
     }
 }
