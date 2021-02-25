@@ -1,6 +1,33 @@
 # BinaryMesh.OpenXml
 
-## Proposed API for creating Presentations
+🚧🚧🚧 This library is under construction 🚧🚧🚧
+
+## Currently Available Features
+### Presentations
+ - Creating and opening presentations
+ - Inserting slides based on layouts
+ - Editing text of existing shapes
+### Spreadsheets
+ - Creating and opening spreadsheets
+ - Inserting sheets
+ - Setting Values of Cells
+
+## Planed Features
+### Presentations
+ - Creating Shapes
+ - Rich Text in Shapes
+ - Formating Shapes
+ - Creating Charts
+ - ...
+### Spreadsheets
+ - Reading Cells
+ - Formatting
+ - ...
+### Wordprocessing
+ - Basic support
+ - ...
+
+## Example API for creating Presentations
 
 ``` csharp
 using BinaryMesh.OpenXml.Presentations;
