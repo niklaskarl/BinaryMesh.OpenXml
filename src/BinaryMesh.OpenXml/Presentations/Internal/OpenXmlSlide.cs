@@ -29,6 +29,16 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             visual => visual
         );
 
+        public IShapeVisual AppendShapeVisual(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGraphicFrameVisual AppendGraphicFrameVisual(string name)
+        {
+            throw new NotImplementedException();
+        }
+
         public IChartSpace CreateChartSpace()
         {
             ChartPart chartPart = this.slidePart.AddNewPartDefaultId<ChartPart>();

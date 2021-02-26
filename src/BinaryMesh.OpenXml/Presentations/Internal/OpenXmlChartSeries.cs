@@ -23,7 +23,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 stringCache.PointCount = new PointCount() { Val = (uint)range.Height.Value };
                 for (uint i = 0; i < range.Height; ++i)
                 {
-                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[0, i].ToString()) });
+                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[0, i].InnerValue) });
                 }
             }
             else if (range.Height == 1 && range.Width > 0)
@@ -31,7 +31,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 stringCache.PointCount = new PointCount() { Val = (uint)range.Width.Value };
                 for (uint i = 0; i < range.Width; ++i)
                 {
-                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].ToString()) });
+                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].InnerValue) });
                 }
             }
             else
@@ -57,7 +57,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 stringCache.PointCount = new PointCount() { Val = (uint)range.Height.Value };
                 for (uint i = 0; i < range.Height; ++i)
                 {
-                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[0, i].ToString()) });
+                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[0, i].InnerValue) });
                 }
             }
             else if (range.Height == 1 && range.Width > 0)
@@ -65,7 +65,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 stringCache.PointCount = new PointCount() { Val = (uint)range.Width.Value };
                 for (uint i = 0; i < range.Width; ++i)
                 {
-                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].ToString()) });
+                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].InnerValue) });
                 }
             }
             else
@@ -91,7 +91,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 numberingCache.PointCount = new PointCount() { Val = (uint)range.Height.Value };
                 for (uint i = 0; i < range.Height; ++i)
                 {
-                    numberingCache.AppendChild(new NumericPoint() { Index = i, NumericValue = new NumericValue(range[0, i].ToString()) });
+                    numberingCache.AppendChild(new NumericPoint() { Index = i, NumericValue = new NumericValue(range[0, i].InnerValue) });
                 }
             }
             else if (range.Height == 1 && range.Width > 0)
@@ -99,7 +99,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 numberingCache.PointCount = new PointCount() { Val = (uint)range.Width.Value };
                 for (uint i = 0; i < range.Width; ++i)
                 {
-                    numberingCache.AppendChild(new NumericPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].ToString()) });
+                    numberingCache.AppendChild(new NumericPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].InnerValue) });
                 }
             }
             else

@@ -9,5 +9,11 @@ namespace BinaryMesh.OpenXml.Presentations
         string Name { get; }
 
         IShapeVisual AsShapeVisual();
+
+        IGraphicFrameVisual AsGraphicFrameVisual();
+
+        IVisual SetOrigin(double x, double y);
+
+        IVisual SetExtend(double width, double height);
     }
 }

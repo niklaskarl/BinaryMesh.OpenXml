@@ -62,7 +62,7 @@ namespace BinaryMesh.OpenXml.Explorer
                     IWorkbook workbook = spreadsheet.Workbook;
                     IWorksheet sheet = workbook.AppendWorksheet("Sheet1");
 
-                    sheet.Cells[0, 1].SetValue("Costs");
+                    string reference = sheet.Cells[0, 1].SetValue("Costs").Reference;
 
                     sheet.Cells[1, 0].SetValue("1. Quarter");
                     sheet.Cells[2, 0].SetValue("2. Quarter");
@@ -77,11 +77,14 @@ namespace BinaryMesh.OpenXml.Explorer
                     IPieChart pieChart = chartSpace.InsertPieChart();
                     pieChart.Series
                         .SetText(workbook.GetRange("Sheet1!$A$2"))
-                        .SetCategoryAxis(workbook.GetRange("Sheet1!$A$1:$D$1"))
-                        .SetValueAxis(workbook.GetRange("Sheet1!$A$2:$D$2"));
+                        .SetCategoryAxis(workbook.GetRange("Sheet1!$B$1:$E$1"))
+                        .SetValueAxis(workbook.GetRange("Sheet1!B$2:$E$2"));
                 }
 
-                // TODO: add chart to slide
+                slide.AppendGraphicFrameVisual("Chart 1")
+                    .SetOrigin(10, 10)
+                    .SetExtend(500, 500)
+                    .SetContent(chartSpace);
 
                 using (Stream stream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite))
                 {

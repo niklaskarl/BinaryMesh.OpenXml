@@ -28,6 +28,21 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this;
         }
 
+        public IGraphicFrameVisual AsGraphicFrameVisual()
+        {
+            return null;
+        }
+
+        public IShapeVisual SetOrigin(double x, double y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IShapeVisual SetExtend(double width, double height)
+        {
+            throw new NotImplementedException();
+        }
+
         public IShapeVisual SetText(string text)
         {
             if (this.shape.TextBody == null)
@@ -58,6 +73,16 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         public OpenXmlElement CloneForSlide()
         {
             return this.shape.CloneNode(true);
+        }
+
+        IVisual IVisual.SetOrigin(double x, double y)
+        {
+            return this.SetOrigin(x, y);
+        }
+
+        IVisual IVisual.SetExtend(double width, double height)
+        {
+            return this.SetExtend(width, height);
         }
     }
 }
