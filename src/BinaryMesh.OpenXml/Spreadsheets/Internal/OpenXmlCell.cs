@@ -2,6 +2,8 @@ using System;
 using System.Linq;
 using DocumentFormat.OpenXml.Spreadsheet;
 
+using BinaryMesh.OpenXml.Spreadsheets.Helpers;
+
 namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 {
     internal sealed class OpenXmlCell : ICell
@@ -42,11 +44,15 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 
         public bool IsRowFixed => this.isRowFixed;
 
-        public string Reference => $"{(this.isColumnFixed ? "$" : "")}{GetColumnCharsFromIndex(this.column)}{(this.isRowFixed ? "$" : "")}{this.row + 1}";
+        public string Reference => $"{(this.isColumnFixed ? "$" : "")}{ReferenceEncoder.EncodeColumnReference(this.column)}{(this.isRowFixed ? "$" : "")}{this.row + 1}";
+
+        public string InnerValue => this.GetInternalCell()?.CellValue?.Text;
+
+        private string UnfixedReference => $"{ReferenceEncoder.EncodeColumnReference(this.column)}{this.row + 1}";
 
         public static bool TryCreateCell(OpenXmlWorksheet worksheet, string reference, out OpenXmlCell cell)
         {
-            if (TryDecodeCellReference(reference, out uint column, out bool isColumnFixed, out uint row, out bool isRowFixed))
+            if (ReferenceEncoder.TryDecodeCellReference(reference, out uint column, out bool isColumnFixed, out uint row, out bool isRowFixed))
             {
                 cell = new OpenXmlCell(worksheet, column, isColumnFixed, row, isRowFixed);
                 return true;
@@ -86,11 +92,11 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             if (row != null && row.RowIndex - 1 == this.row)
             {
                 Cell cell = row.Elements<Cell>()
-                    .SkipWhile(c => !TryDecodeCellReference(c.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex < this.column)
+                    .SkipWhile(c => !ReferenceEncoder.TryDecodeCellReference(c.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex < this.column)
                     .FirstOrDefault();
 
                 {
-                    if (cell != null && TryDecodeCellReference(cell.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) && columnIndex == this.column)
+                    if (cell != null && ReferenceEncoder.TryDecodeCellReference(cell.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) && columnIndex == this.column)
                     {
                         return cell;
                     }
@@ -111,17 +117,17 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             if (row != null && row.RowIndex - 1 == this.row)
             {
                 cell = row.Elements<Cell>()
-                    .SkipWhile(c => !TryDecodeCellReference(c.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex < this.column)
+                    .SkipWhile(c => !ReferenceEncoder.TryDecodeCellReference(c.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex < this.column)
                     .FirstOrDefault();
 
                 {
                     if (cell == null)
                     {
-                        cell = row.AppendChild(new Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" });
+                        cell = row.AppendChild(new Cell() { CellReference = this.UnfixedReference });
                     }
-                    else if (!TryDecodeCellReference(cell.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex != this.column)
+                    else if (!ReferenceEncoder.TryDecodeCellReference(cell.CellReference, out uint columnIndex, out bool isColumnFixed, out uint rowIndex, out bool isRowFixed) || columnIndex != this.column)
                     {
-                        cell = row.InsertBefore(new Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" }, cell);
+                        cell = row.InsertBefore(new Cell() { CellReference = this.UnfixedReference }, cell);
                     }
                 }
             }
@@ -136,83 +142,10 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
                     row = sheetData.AppendChild(new Row() { RowIndex = this.row + 1 });
                 }
 
-                cell = row.AppendChild(new Cell() { CellReference = $"{GetColumnCharsFromIndex(this.column)}{this.row + 1}" });
+                cell = row.AppendChild(new Cell() { CellReference = this.UnfixedReference });
             }
 
             return cell;
-        }
-
-        private static string GetColumnCharsFromIndex(uint column)
-        {
-            string result = ((char)('A' + (column) % ('Z' - 'A' + 1))).ToString();
-            while((column = (column) / ('Z' - 'A' + 1)) > 0)
-            {
-                result = ((char)('A' + (column) % ('Z' - 'A' + 1))) + result;
-            }
-
-            return result;
-        }
-
-        private static bool TryDecodeCellReference(string reference, out uint column, out bool isColumnFixed, out uint row, out bool isRowFixed)
-        {
-            column = 0;
-            isColumnFixed = false;
-            row = 0;
-            isRowFixed = false;
-
-            int i = 0;
-            if (reference[i] == '$')
-            {
-                isColumnFixed = true;
-                ++i;
-            }
-
-            if (!(i < reference.Length && ((reference[i] >= 'A' && reference[i] <= 'Z') || (reference[i] >= 'a' && reference[i] <= 'z'))))
-            {
-                return false;
-            }
-
-            while (i < reference.Length && ((reference[i] >= 'A' && reference[i] <= 'Z') || (reference[i] >= 'a' && reference[i] <= 'z')))
-            {
-                if (reference[i] < 'a')
-                {
-                    column *= 'Z' - 'A' + 1;
-                    column += ((uint)(reference[i] - 'A') + 1u);
-                }
-                else
-                {
-                    column *= 'z' - 'a' + 1;
-                    column += ((uint)(reference[i] - 'a') + 1u);
-                }
-
-                ++i;
-            }
-
-            if (i == reference.Length)
-            {
-                return false;
-            }
-
-            if (reference[i] == '$')
-            {
-                isRowFixed = true;
-                ++i;
-            }
-
-            if (i == reference.Length)
-            {
-                return false;
-            }
-
-            if (!uint.TryParse(reference.Substring(i), out row))
-            {
-                return false;
-            }
-
-            column -= 1;
-            row -= 1;
-
-            return true;
         }
     }
 }

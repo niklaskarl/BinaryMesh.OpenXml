@@ -92,7 +92,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 
         public IRange GetRange(string formula)
         {
-            bool result = ReferenceDecoder.TryDecodeRangeReference(
+            bool result = ReferenceEncoder.TryDecodeRangeReference(
                 formula,
                 out string worksheetName,
                 out uint? startColumn, out bool isStartColumnFixed,

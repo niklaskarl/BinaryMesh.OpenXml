@@ -1,10 +1,29 @@
 using System;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace BinaryMesh.OpenXml.Spreadsheets.Helpers
 {
-    internal static class ReferenceDecoder
+    internal static class ReferenceEncoder
     {
+
+        public static string EncodeRangeReference(
+            string worksheetName,
+            uint? startColumn, bool isStartColumnFixed,
+            uint? startRow, bool isStartRowFixed,
+            uint? endColumn, bool isEndColumnFixed,
+            uint? endRow, bool isEndRowFixed)
+        {
+            string localRangeReference = EncodeLocalRangeReference(
+                startColumn, isStartColumnFixed,
+                startRow, isStartRowFixed,
+                endColumn, isEndColumnFixed,
+                endRow, isEndRowFixed
+            );
+
+            return worksheetName != null ? $"{worksheetName}!{localRangeReference}" : localRangeReference;
+        }
+
         public static bool TryDecodeRangeReference(
             string reference,
             out string worksheet,
@@ -24,6 +43,61 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Helpers
                 out endColumn, out isEndColumnFixed,
                 out endRow, out isEndRowFixed
             );
+        }
+
+        public static string EncodeLocalRangeReference(
+            uint? startColumn, bool isStartColumnFixed,
+            uint? startRow, bool isStartRowFixed,
+            uint? endColumn, bool isEndColumnFixed,
+            uint? endRow, bool isEndRowFixed)
+        {
+            StringBuilder builder = new StringBuilder();
+            if (startColumn.HasValue)
+                {
+                    if (isStartColumnFixed)
+                    {
+                        builder.Append('$');
+                    }
+
+                    builder.Append(ReferenceEncoder.EncodeColumnReference(startColumn.Value));
+                }
+
+                if (startRow.HasValue)
+                {
+                    if (isStartRowFixed)
+                    {
+                        builder.Append('$');
+                    }
+
+                    builder.Append(startRow.Value + 1);
+                }
+
+                if (endColumn != startColumn || endRow != startRow)
+                {
+                    builder.Append(':');
+
+                    if (endColumn.HasValue)
+                    {
+                        if (isEndColumnFixed)
+                        {
+                            builder.Append('$');
+                        }
+
+                    builder.Append(ReferenceEncoder.EncodeColumnReference(endColumn.Value));
+                    }
+
+                    if (endRow.HasValue)
+                    {
+                        if (isEndRowFixed)
+                        {
+                            builder.Append('$');
+                        }
+
+                        builder.Append(endRow.Value + 1);
+                    }
+                }
+
+                return builder.ToString();
         }
 
         public static bool TryDecodeLocalRangeReference(
@@ -78,13 +152,13 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Helpers
                 if (match.Groups["column"].Success)
                 {
                     isColumnFixed = match.Groups["isColumnFixed"].Success;
-                    column = DecodeColumn(match.Groups["column"].Value);
+                    column = DecodeColumnReference(match.Groups["column"].Value);
                 }
 
                 if (match.Groups["row"].Success)
                 {
                     isRowFixed = match.Groups["isRowFixed"].Success;
-                    row = uint.Parse(match.Groups["row"].Value);
+                    row = uint.Parse(match.Groups["row"].Value) - 1;
                 }
 
                 return true;
@@ -93,7 +167,30 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Helpers
             return false;
         }
 
-        private static uint DecodeColumn(string reference)
+        public static bool TryDecodeCellReference(
+            string reference,
+            out uint column, out bool isColumnFixed,
+            out uint row, out bool isRowFixed)
+        {
+            bool result = TryDecodePartialRangeReference(reference, out uint? optColumn, out isColumnFixed, out uint? optRow, out isRowFixed);
+            column = optColumn ?? 0u;
+            row = optRow ?? 0u;
+
+            return result && optColumn.HasValue && optRow.HasValue;
+        }
+
+        public static string EncodeColumnReference(uint column)
+        {
+            string result = ((char)('A' + (column) % ('Z' - 'A' + 1))).ToString();
+            while((column = (column) / ('Z' - 'A' + 1)) > 0)
+            {
+                result = ((char)('A' + (column) % ('Z' - 'A' + 1))) + result;
+            }
+
+            return result;
+        }
+
+        public static uint DecodeColumnReference(string reference)
         {
             uint column = 0;
 
@@ -119,7 +216,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Helpers
                 throw new FormatException();
             }
 
-            return column;
+            return column - 1;
         }
     }
 }

@@ -14,6 +14,8 @@ namespace BinaryMesh.OpenXml.Spreadsheets
 
         string Reference { get; }
 
+        String InnerValue { get; }
+
         ICell SetValue(double value);
 
         ICell SetValue(string value);

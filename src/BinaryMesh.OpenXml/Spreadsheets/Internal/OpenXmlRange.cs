@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml.Spreadsheet;
+using System.Text;
+
+using BinaryMesh.OpenXml.Spreadsheets.Helpers;
 
 namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 {
@@ -56,18 +56,14 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             this.isEndRowFixed = isEndRowFixed;
         }
 
-        public ICell this[uint column, uint row] => throw new NotImplementedException();
+        public ICell this[uint column, uint row] =>
+            (!this.Width.HasValue || column < this.Width.Value) && (!this.Height.HasValue || row < this.Height.Value) ?
+                this.worksheet.Cells[(this.startColumn ?? 0u) + column, (this.startRow ?? 0u) + row] : throw new ArgumentOutOfRangeException();
 
-        public string Formula
-        {
-            get
-            {
-                return null;
-            }
-        }
+        public string Formula => ReferenceEncoder.EncodeRangeReference(this.worksheet?.Name, this.startColumn, this.isStartColumnFixed, this.startRow, this.isStartRowFixed, this.endColumn, this.isEndColumnFixed, this.endRow, this.isEndRowFixed);
 
-        public int? Width => throw new NotImplementedException();
+        public int? Width => (this.startColumn.HasValue && this.endColumn.HasValue) ? ((int)this.endColumn.Value - (int)this.startColumn.Value + 1) : (int?)null;
 
-        public int? Height => throw new NotImplementedException();
+        public int? Height => (this.startRow.HasValue && this.endRow.HasValue) ? ((int)this.endRow.Value - (int)this.startRow.Value + 1) : (int?)null;
     }
 }
