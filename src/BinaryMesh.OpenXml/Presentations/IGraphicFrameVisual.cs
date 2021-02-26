@@ -4,9 +4,9 @@ namespace BinaryMesh.OpenXml.Presentations
 {
     public interface IGraphicFrameVisual : IVisual
     {
-        new IGraphicFrameVisual SetOrigin(double x, double y);
+        new IGraphicFrameVisual SetOffset(long x, long y);
 
-        new IGraphicFrameVisual SetExtend(double width, double height);
+        new IGraphicFrameVisual SetExtents(long width, long height);
 
         IGraphicFrameVisual SetContent(IChartSpace chartSpace);
     }

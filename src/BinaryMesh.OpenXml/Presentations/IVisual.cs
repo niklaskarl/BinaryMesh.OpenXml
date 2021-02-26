@@ -12,8 +12,8 @@ namespace BinaryMesh.OpenXml.Presentations
 
         IGraphicFrameVisual AsGraphicFrameVisual();
 
-        IVisual SetOrigin(double x, double y);
+        IVisual SetOffset(long x, long y);
 
-        IVisual SetExtend(double width, double height);
+        IVisual SetExtents(long width, long height);
     }
 }

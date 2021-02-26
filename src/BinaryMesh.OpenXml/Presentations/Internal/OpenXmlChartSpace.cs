@@ -7,7 +7,7 @@ using BinaryMesh.OpenXml.Spreadsheets.Internal;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlChartSpace : IChartSpace
+    internal sealed class OpenXmlChartSpace : IOpenXmlChartSpace, IChartSpace
     {
         private readonly ChartPart chartPart;
 
@@ -16,11 +16,15 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.chartPart = chartPart;
         }
 
+        public ChartPart ChartPart => this.chartPart;
+
         public ISpreadsheetDocument OpenSpreadsheetDocument()
         {
             if (this.chartPart.EmbeddedPackagePart == null)
             {
+                string nextId = this.chartPart.GetNextRelationshipId();
                 EmbeddedPackagePart embeddedPackagePart = this.chartPart.AddEmbeddedPackagePart("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                this.chartPart.ChangeIdOfPart(embeddedPackagePart, nextId);
                 this.chartPart.ChartSpace
                     .AppendChildFluent(new ExternalData()
                     {
@@ -41,7 +45,13 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             ChartSpace chartSpace = this.chartPart.ChartSpace;
             Chart chart = chartSpace.GetFirstChild<Chart>() ?? chartSpace.AppendChild(new Chart());
             PlotArea plotArea = chart.PlotArea ?? (chart.PlotArea = new PlotArea());
-            return new OpenXmlPieChart(plotArea.AppendChild(new PieChart()));
+
+            return new OpenXmlPieChart(
+                plotArea.AppendChild(
+                    new PieChart()
+                        .AppendChildFluent(new BarChartSeries() { Index = new Index() { Val = 0 } })
+                )
+            );
         }
 
         public IBarChart InsertBarChart()

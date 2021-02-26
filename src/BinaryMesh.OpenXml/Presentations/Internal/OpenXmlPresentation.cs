@@ -66,7 +66,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public ISlide InsertSlide(ISlideLayout slideLayout, int index)
         {
-            if (!(slideLayout is IOpenXmlSlideLayout slideLayoutRef))
+            if (!(slideLayout is IOpenXmlSlideLayout internalSlideLayout))
             {
                 throw new ArgumentException();
             }
@@ -78,15 +78,15 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 {
                     ShapeTree = new ShapeTree()
                     {
-                        NonVisualGroupShapeProperties = slideLayoutRef.SlideLayoutPart.SlideLayout.CommonSlideData.ShapeTree.NonVisualGroupShapeProperties.CloneNode(true) as NonVisualGroupShapeProperties,
-                        GroupShapeProperties = slideLayoutRef.SlideLayoutPart.SlideLayout.CommonSlideData.ShapeTree.GroupShapeProperties.CloneNode(true) as GroupShapeProperties
+                        NonVisualGroupShapeProperties = internalSlideLayout.SlideLayoutPart.SlideLayout.CommonSlideData.ShapeTree.NonVisualGroupShapeProperties.CloneNode(true) as NonVisualGroupShapeProperties,
+                        GroupShapeProperties = internalSlideLayout.SlideLayoutPart.SlideLayout.CommonSlideData.ShapeTree.GroupShapeProperties.CloneNode(true) as GroupShapeProperties
                     }
                 }
             };
 
             slide.CommonSlideData.ShapeTree.Append(
-                slideLayoutRef.SlideLayoutPart.SlideLayout.CommonSlideData.ShapeTree
-                    .Select(element => OpenXmlVisualFactory.TryCreateVisual(this, element, out IOpenXmlVisual visual) ? visual : null).Where(visual => visual != null)
+                internalSlideLayout.SlideLayoutPart.SlideLayout.CommonSlideData.ShapeTree
+                    .Select(element => OpenXmlVisualFactory.TryCreateVisual(internalSlideLayout, element, out IOpenXmlVisual visual) ? visual : null).Where(visual => visual != null)
                     .Where(visual => visual?.IsPlaceholder ?? false)
                     .Select(visual => visual.CloneForSlide())
             );
@@ -94,7 +94,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             SlidePart slidePart = this.presentationPart.AddNewPart<SlidePart>();
             slide.Save(slidePart);
 
-            slidePart.CreateRelationshipToPartDefaultId(slideLayoutRef.SlideLayoutPart);
+            slidePart.CreateRelationshipToPartDefaultId(internalSlideLayout.SlideLayoutPart);
 
             if (this.presentationPart.Presentation.SlideIdList == null)
             {

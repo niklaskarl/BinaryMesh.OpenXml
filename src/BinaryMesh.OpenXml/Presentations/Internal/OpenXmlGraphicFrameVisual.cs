@@ -1,18 +1,20 @@
 using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
+using Drawing = DocumentFormat.OpenXml.Drawing;
+using Charts = DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
     internal sealed class OpenXmlGraphicFrameVisual : IOpenXmlVisual, IGraphicFrameVisual, IVisual
     {
-        private readonly IOpenXmlPresentation presentation;
+        private readonly IOpenXmlVisualContainer container;
 
         private readonly GraphicFrame graphicFrame;
 
-        public OpenXmlGraphicFrameVisual(IOpenXmlPresentation presentation, GraphicFrame graphicFrame)
+        public OpenXmlGraphicFrameVisual(IOpenXmlVisualContainer container, GraphicFrame graphicFrame)
         {
-            this.presentation = presentation;
+            this.container = container;
             this.graphicFrame = graphicFrame;
         }
 
@@ -32,19 +34,54 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this;
         }
 
-        public IGraphicFrameVisual SetExtend(double width, double height)
+        public IGraphicFrameVisual SetOffset(long x, long y)
         {
-            throw new NotImplementedException();
+            Transform transform = this.graphicFrame.Transform ?? (this.graphicFrame.Transform = new Transform());
+            transform.Offset = new Drawing.Offset()
+            {
+                X = x,
+                Y = y
+            };
+
+            return this;
         }
 
-        public IGraphicFrameVisual SetOrigin(double x, double y)
+        public IGraphicFrameVisual SetExtents(long width, long height)
         {
-            throw new NotImplementedException();
+            Transform transform = this.graphicFrame.Transform ?? (this.graphicFrame.Transform = new Transform());
+            transform.Extents = new Drawing.Extents()
+            {
+                Cx = width,
+                Cy = height
+            };
+
+            return this;
         }
 
         public IGraphicFrameVisual SetContent(IChartSpace chartSpace)
         {
-            throw new NotImplementedException();
+            if (!(chartSpace is IOpenXmlChartSpace internalChartSpace))
+            {
+                throw new ArgumentException();
+            }
+
+            string id = this.container.Part.GetIdOfPart(internalChartSpace.ChartPart);
+            if (id == null)
+            {
+                id = this.container.Part.CreateRelationshipToPartDefaultId(internalChartSpace.ChartPart);
+            }
+
+            Drawing.Graphic graphic = this.graphicFrame.Graphic ?? (this.graphicFrame.Graphic = new Drawing.Graphic());
+            Charts.Chart chart = new Charts.Chart();
+            chart.SetAttribute(new OpenXmlAttribute("r", "id", "http://schemas.openxmlformats.org/officeDocument/2006/relationships", id));
+
+            graphic.GraphicData = new Drawing.GraphicData()
+            {
+                Uri = "http://schemas.openxmlformats.org/drawingml/2006/chart"
+            }
+                .AppendChildFluent(chart);
+
+            return this;
         }
 
         public OpenXmlElement CloneForSlide()
@@ -52,14 +89,14 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this.graphicFrame.CloneNode(true);
         }
 
-        IVisual IVisual.SetOrigin(double x, double y)
+        IVisual IVisual.SetOffset(long x, long y)
         {
-            return this.SetOrigin(x, y);
+            return this.SetOffset(x, y);
         }
 
-        IVisual IVisual.SetExtend(double width, double height)
+        IVisual IVisual.SetExtents(long width, long height)
         {
-            return this.SetExtend(width, height);
+            return this.SetExtents(width, height);
         }
     }
 }

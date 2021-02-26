@@ -11,6 +11,6 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         {
             this.pieChart = pieChart;
         }
-        public IChartSeries Series => new OpenXmlChartSeries(this.pieChart.GetFirstChild<BarChartSeries>() ?? this.pieChart.AppendChild(new BarChartSeries()));
+        public IChartSeries Series => new OpenXmlChartSeries(this.pieChart.GetFirstChild<BarChartSeries>());
     }
 }

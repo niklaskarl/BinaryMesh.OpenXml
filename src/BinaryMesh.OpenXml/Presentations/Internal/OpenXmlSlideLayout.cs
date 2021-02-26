@@ -3,7 +3,7 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlSlideLayout : IOpenXmlSlideLayout, ISlideLayout
+    internal sealed class OpenXmlSlideLayout : IOpenXmlSlideLayout, IOpenXmlVisualContainer, ISlideLayout
     {
         private readonly IOpenXmlPresentation presentation;
 
@@ -14,6 +14,8 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.presentation = presentation;
             this.slideLayoutPart = slideLayoutPart;
         }
+
+        public OpenXmlPart Part => this.slideLayoutPart;
 
         public SlideLayoutPart SlideLayoutPart => this.slideLayoutPart;
     }

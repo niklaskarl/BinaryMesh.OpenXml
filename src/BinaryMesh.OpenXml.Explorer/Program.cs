@@ -51,12 +51,13 @@ namespace BinaryMesh.OpenXml.Explorer
 
             using (presentation)
             {
-                ISlide slide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[0]);
-                slide.VisualTree["Titel 1"].AsShapeVisual().SetText("Automated Presentation Documents made easy");
-                slide.VisualTree["Untertitel 2"].AsShapeVisual().SetText("BinaryMesh.OpenXml is an open-source library to easily and intuitively create OpenXml documents");
-                slide.VisualTree["Datumsplatzhalter 3"].AsShapeVisual().SetText("10.10.2020");
+                ISlide titleSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[0]);
+                titleSlide.VisualTree["Titel 1"].AsShapeVisual().SetText("Automated Presentation Documents made easy");
+                titleSlide.VisualTree["Untertitel 2"].AsShapeVisual().SetText("BinaryMesh.OpenXml is an open-source library to easily and intuitively create OpenXml documents");
+                titleSlide.VisualTree["Datumsplatzhalter 3"].AsShapeVisual().SetText("10.10.2020");
 
-                IChartSpace chartSpace = slide.CreateChartSpace();
+                ISlide chartSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
+                IChartSpace chartSpace = chartSlide.CreateChartSpace();
                 using (ISpreadsheetDocument spreadsheet = chartSpace.OpenSpreadsheetDocument())
                 {
                     IWorkbook workbook = spreadsheet.Workbook;
@@ -81,9 +82,9 @@ namespace BinaryMesh.OpenXml.Explorer
                         .SetValueAxis(workbook.GetRange("Sheet1!B$2:$E$2"));
                 }
 
-                slide.AppendGraphicFrameVisual("Chart 1")
-                    .SetOrigin(10, 10)
-                    .SetExtend(500, 500)
+                chartSlide.AppendGraphicFrameVisual("Chart 1")
+                    .SetOffset(2032000, 719666)
+                    .SetExtents(8128000, 5418667)
                     .SetContent(chartSpace);
 
                 using (Stream stream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite))

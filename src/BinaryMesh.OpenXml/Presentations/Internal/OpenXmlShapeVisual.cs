@@ -7,13 +7,13 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 {
     internal sealed class OpenXmlShapeVisual : IShapeVisual, IOpenXmlVisual, IVisual
     {
-        private readonly IOpenXmlPresentation presentation;
+        private readonly IOpenXmlVisualContainer container;
 
         private readonly Shape shape;
 
-        public OpenXmlShapeVisual(IOpenXmlPresentation presentation, Shape shape)
+        public OpenXmlShapeVisual(IOpenXmlVisualContainer container, Shape shape)
         {
-            this.presentation = presentation;
+            this.container = container;
             this.shape = shape;
         }
 
@@ -33,14 +33,30 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return null;
         }
 
-        public IShapeVisual SetOrigin(double x, double y)
+        public IShapeVisual SetOffset(long x, long y)
         {
-            throw new NotImplementedException();
+            ShapeProperties shapeProperties = this.shape.ShapeProperties ?? (this.shape.ShapeProperties = new ShapeProperties());
+            Drawing.Transform2D transform = shapeProperties.Transform2D ?? (shapeProperties.Transform2D = new Drawing.Transform2D());
+            transform.Offset = new Drawing.Offset()
+            {
+                X = x,
+                Y = y
+            };
+
+            return this;
         }
 
-        public IShapeVisual SetExtend(double width, double height)
+        public IShapeVisual SetExtents(long width, long height)
         {
-            throw new NotImplementedException();
+            ShapeProperties shapeProperties = this.shape.ShapeProperties ?? (this.shape.ShapeProperties = new ShapeProperties());
+            Drawing.Transform2D transform = shapeProperties.Transform2D ?? (shapeProperties.Transform2D = new Drawing.Transform2D());
+            transform.Extents = new Drawing.Extents()
+            {
+                Cx = width,
+                Cy = height
+            };
+
+            return this;
         }
 
         public IShapeVisual SetText(string text)
@@ -75,14 +91,14 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this.shape.CloneNode(true);
         }
 
-        IVisual IVisual.SetOrigin(double x, double y)
+        IVisual IVisual.SetOffset(long x, long y)
         {
-            return this.SetOrigin(x, y);
+            return this.SetOffset(x, y);
         }
 
-        IVisual IVisual.SetExtend(double width, double height)
+        IVisual IVisual.SetExtents(long width, long height)
         {
-            return this.SetExtend(width, height);
+            return this.SetExtents(width, height);
         }
     }
 }
