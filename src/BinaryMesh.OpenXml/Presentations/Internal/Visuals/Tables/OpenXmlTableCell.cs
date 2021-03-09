@@ -36,12 +36,17 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         protected override OpenXmlElement GetShapeProperties()
         {
-            throw new NotSupportedException();
+            return this.tableCell.TableCellProperties;
         }
 
         protected override OpenXmlElement GetOrCreateShapeProperties()
         {
-            throw new NotSupportedException();
+            if (this.tableCell.TableCellProperties == null)
+            {
+                this.tableCell.TableCellProperties = new Drawing.TableCellProperties();
+            }
+
+            return this.tableCell.TableCellProperties;
         }
     }
 }
