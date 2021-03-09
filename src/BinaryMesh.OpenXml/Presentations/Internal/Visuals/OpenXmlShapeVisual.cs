@@ -5,7 +5,7 @@ using Drawing = DocumentFormat.OpenXml.Drawing;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlShapeVisual : IShapeVisual, IOpenXmlVisual, IVisual
+    internal sealed class OpenXmlShapeVisual : OpenXmlTextShapeBase<IShapeVisual>, IShapeVisual, IOpenXmlVisual, IVisual
     {
         private readonly IOpenXmlVisualContainer container;
 
@@ -17,20 +17,47 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.shape = shape;
         }
 
+        protected override IShapeVisual Self => this;
+
         public uint Id => this.shape.NonVisualShapeProperties?.NonVisualDrawingProperties?.Id;
 
         public string Name => this.shape.NonVisualShapeProperties?.NonVisualDrawingProperties?.Name;
 
         public bool IsPlaceholder => this.shape.NonVisualShapeProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape != null;
 
+        protected override OpenXmlElement GetTextBody()
+        {
+            return this.shape.TextBody;
+        }
+
+        protected override OpenXmlElement GetOrCreateTextBody()
+        {
+            if (this.shape.TextBody == null)
+            {
+                this.shape.TextBody = new TextBody();
+            }
+
+            return this.shape.TextBody;
+        }
+
+        protected override OpenXmlElement GetShapeProperties()
+        {
+            return this.shape.ShapeProperties;
+        }
+
+        protected override OpenXmlElement GetOrCreateShapeProperties()
+        {
+            if (this.shape.ShapeProperties == null)
+            {
+                this.shape.ShapeProperties = new ShapeProperties();
+            }
+
+            return this.shape.ShapeProperties;
+        }
+
         public IShapeVisual AsShapeVisual()
         {
             return this;
-        }
-
-        public IGraphicFrameVisual AsGraphicFrameVisual()
-        {
-            return null;
         }
 
         public IShapeVisual SetOffset(long x, long y)
@@ -55,33 +82,6 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 Cx = width,
                 Cy = height
             };
-
-            return this;
-        }
-
-        public IShapeVisual SetText(string text)
-        {
-            if (this.shape.TextBody == null)
-            {
-                this.shape.TextBody = new TextBody();
-            }
-            else
-            {
-                this.shape.TextBody.RemoveAllChildren<Drawing.Paragraph>();
-            }
-
-            this.shape.TextBody.AppendChildFluent(
-                new Drawing.Paragraph()
-                {
-    
-                }
-                .AppendChildFluent(
-                    new Drawing.Run()
-                    {
-                        Text = new Drawing.Text() { Text = text }
-                    }
-                )
-            );
 
             return this;
         }

@@ -1,8 +1,10 @@
 using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing.Charts;
+using Drawing = DocumentFormat.OpenXml.Drawing;
 
 using BinaryMesh.OpenXml.Spreadsheets;
+using System.Linq;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
@@ -115,6 +117,46 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             };
 
             return this;
+        }
+
+        public IChartSeries SetFill(uint index, string srgb)
+        {
+            DataPoint dataPoint = this.GetOrCreateDataPoint(index);
+            this.RemoveFill(dataPoint);
+
+            dataPoint.ChartShapeProperties.AppendChild(
+                new Drawing.SolidFill() { RgbColorModelHex = new Drawing.RgbColorModelHex() { Val = srgb } }
+            );
+
+            return this;
+        }
+
+        private DataPoint GetOrCreateDataPoint(uint index)
+        {
+            DataPoint dataPoint = this.series.Elements<DataPoint>().FirstOrDefault(dp => dp.Index?.Val == index);
+            if (dataPoint == null)
+            {
+                dataPoint = this.series.AppendChild(
+                    new DataPoint()
+                    {
+                        Index = new Index() { Val = index },
+                        Bubble3D = new Bubble3D() { Val = false },
+                        ChartShapeProperties = new ChartShapeProperties()
+                    }
+                );
+            }
+
+            return dataPoint;
+        }
+
+        private void RemoveFill(DataPoint dataPoint)
+        {
+            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.NoFill>();
+            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.SolidFill>();
+            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.GradientFill>();
+            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.BlipFill>();
+            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.PatternFill>();
+            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.GroupFill>();
         }
     }
 }

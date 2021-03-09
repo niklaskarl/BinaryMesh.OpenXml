@@ -6,12 +6,8 @@ namespace BinaryMesh.OpenXml.Presentations
     {
         int Index { get; }
 
-        KeyedReadOnlyList<string, IVisual> VisualTree { get; }
+        ISlideLayout SlideLayout { get; }
 
-        IShapeVisual AppendShapeVisual(string name);
-
-        IGraphicFrameVisual AppendGraphicFrameVisual(string name);
-
-        IChartSpace CreateChartSpace();
+        IShapeTree ShapeTree { get; }
     }
 }

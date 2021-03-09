@@ -10,8 +10,6 @@ namespace BinaryMesh.OpenXml.Presentations
 
         IShapeVisual AsShapeVisual();
 
-        IGraphicFrameVisual AsGraphicFrameVisual();
-
         IVisual SetOffset(long x, long y);
 
         IVisual SetExtents(long width, long height);

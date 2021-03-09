@@ -9,6 +9,7 @@ using Charts = DocumentFormat.OpenXml.Drawing.Charts;
 
 using BinaryMesh.OpenXml.Helpers;
 using BinaryMesh.OpenXml.Spreadsheets;
+using System.Threading.Tasks;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
@@ -133,6 +134,14 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.presentationDocument.Close();
             this.stream.Position = 0;
             this.stream.CopyTo(destination);
+            this.Dispose();
+        }
+
+        public async Task CloseAsync(Stream destination)
+        {
+            this.presentationDocument.Close();
+            this.stream.Position = 0;
+            await this.stream.CopyToAsync(destination);
             this.Dispose();
         }
 

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-
-using BinaryMesh.OpenXml.Spreadsheets;
+using System.Threading.Tasks;
 
 namespace BinaryMesh.OpenXml.Presentations
 {
@@ -17,5 +16,7 @@ namespace BinaryMesh.OpenXml.Presentations
         ISlide InsertSlide(ISlideLayout layout, int index);
 
         void Close(Stream destination);
+
+        Task CloseAsync(Stream destination);
     }
 }
