@@ -6,21 +6,25 @@
 ### Presentations
  - Creating and opening presentations
  - Inserting slides based on layouts
- - Editing text of existing shapes
+ - Creating Shapes
+ - Editing text of shapes
+ - Formating Shapes
+ - Creating Charts
 ### Spreadsheets
  - Creating and opening spreadsheets
  - Inserting sheets
  - Setting Values of Cells
+ - Reading Cells
 
 ## Planed Features
 ### Presentations
- - Creating Shapes
+ - Advanced Shapes
+ - Pictures
+ - Even more formatting
+ - Even more charts
  - Rich Text in Shapes
- - Formating Shapes
- - Creating Charts
  - ...
 ### Spreadsheets
- - Reading Cells
  - Formatting
  - ...
 ### Wordprocessing
