@@ -57,12 +57,12 @@ namespace BinaryMesh.OpenXml.Explorer
                 titleSlide.ShapeTree.Visuals["Datumsplatzhalter 3"].AsShapeVisual().SetText("10.10.2020");
 
                 ISlide chartSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
-                IChartVisual chartVisual = chartSlide.ShapeTree.AppendChartVisual("Chart 1")
+                IChartVisual pieChartVisual = chartSlide.ShapeTree.AppendChartVisual("Chart 1")
                     .SetOffset(2032000, 719666)
                     .SetExtents(8128000, 5418667);
 
-                IChartSpace chartSpace = chartVisual.ChartSpace;
-                using (ISpreadsheetDocument spreadsheet = chartSpace.OpenSpreadsheetDocument())
+                IChartSpace pieChartSpace = pieChartVisual.ChartSpace;
+                using (ISpreadsheetDocument spreadsheet = pieChartSpace.OpenSpreadsheetDocument())
                 {
                     IWorkbook workbook = spreadsheet.Workbook;
                     IWorksheet sheet = workbook.AppendWorksheet("Sheet1");
@@ -79,7 +79,11 @@ namespace BinaryMesh.OpenXml.Explorer
                     sheet.Cells[3, 1].SetValue(218737);
                     sheet.Cells[4, 1].SetValue(187025);
 
-                    IPieChart pieChart = chartSpace.InsertPieChart();
+                    IPieChart pieChart = pieChartSpace.InsertPieChart()
+                        .SetFirstSliceAngle(Math.PI * 0.5)
+                        .SetExplosion(0.8)
+                        .SetHoleSize(0.5);
+
                     pieChart.Series
                         .SetText(workbook.GetRange("Sheet1!$A$2"))
                         .SetCategoryAxis(workbook.GetRange("Sheet1!$B$1:$E$1"))
@@ -88,6 +92,49 @@ namespace BinaryMesh.OpenXml.Explorer
                         .SetFill(1, "FFFFFF")
                         .SetFill(2, "FFFF00")
                         .SetFill(3, "FF0000");
+                }
+
+                IChartVisual barChartVisual = chartSlide.ShapeTree.AppendChartVisual("Chart 2")
+                    .SetOffset(2032000, 719666)
+                    .SetExtents(8128000, 5418667);
+
+                IChartSpace barChartSpace = barChartVisual.ChartSpace;
+                using (ISpreadsheetDocument spreadsheet = barChartSpace.OpenSpreadsheetDocument())
+                {
+                    IWorkbook workbook = spreadsheet.Workbook;
+                    IWorksheet sheet = workbook.AppendWorksheet("Sheet1");
+
+                    string reference = sheet.Cells[0, 1].SetValue("Costs").Reference;
+
+                    sheet.Cells["A2"].SetValue("Kategorie 1");
+                    sheet.Cells["A3"].SetValue("Kategorie 2");
+                    sheet.Cells["A4"].SetValue("Kategorie 3");
+                    sheet.Cells["A5"].SetValue("Kategorie 4");
+
+                    sheet.Cells["B1"].SetValue("Label 1");
+                    sheet.Cells["C1"].SetValue("Label 2");
+                    sheet.Cells["D1"].SetValue("Label 3");
+
+                    sheet.Cells["B2"].SetValue(106);
+                    sheet.Cells["B3"].SetValue(18742);
+                    sheet.Cells["B4"].SetValue(237);
+                    sheet.Cells["B5"].SetValue(1025);
+
+                    sheet.Cells["C2"].SetValue(12306);
+                    sheet.Cells["C3"].SetValue(3441);
+                    sheet.Cells["C4"].SetValue(325234);
+                    sheet.Cells["C5"].SetValue(123);
+
+                    sheet.Cells["D2"].SetValue(25241);
+                    sheet.Cells["D3"].SetValue(8345);
+                    sheet.Cells["D4"].SetValue(132523);
+                    sheet.Cells["D5"].SetValue(12345);
+
+                    CartesianAxes axes = barChartSpace.AppendCartesianAxes();
+                    IBarChart barChart = barChartSpace.InsertBarChart(axes)
+                        .SetDirection(BarChartDirection.Column)
+                        .SetGrouping(BarChartGrouping.Clustered)
+                        .InitializeFromRange(sheet.GetRange("B1:D1"), sheet.GetRange("A2:A5"));
                 }
 
                 chartSlide.ShapeTree.AppendShapeVisual("Shape 7")
