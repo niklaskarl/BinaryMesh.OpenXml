@@ -4,6 +4,8 @@ namespace BinaryMesh.OpenXml.Spreadsheets
 {
     public interface ICell
     {
+        IWorksheet Worksheet { get; }
+
         uint Column { get; }
 
         bool IsColumnFixed { get; }

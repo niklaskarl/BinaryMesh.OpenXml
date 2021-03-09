@@ -62,6 +62,16 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
 
         public string Formula => ReferenceEncoder.EncodeRangeReference(this.worksheet?.Name, this.startColumn, this.isStartColumnFixed, this.startRow, this.isStartRowFixed, this.endColumn, this.isEndColumnFixed, this.endRow, this.isEndRowFixed);
 
+        public IWorksheet Worksheet => this.worksheet;
+
+        public uint? StartColumn => this.startColumn;
+
+        public uint? StartRow => this.startRow;
+
+        public uint? EndColumn => this.endColumn;
+
+        public uint? EndRow => this.endRow;
+
         public int? Width => (this.startColumn.HasValue && this.endColumn.HasValue) ? ((int)this.endColumn.Value - (int)this.startColumn.Value + 1) : (int?)null;
 
         public int? Height => (this.startRow.HasValue && this.endRow.HasValue) ? ((int)this.endRow.Value - (int)this.startRow.Value + 1) : (int?)null;

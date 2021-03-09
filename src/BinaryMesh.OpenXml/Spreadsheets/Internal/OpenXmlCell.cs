@@ -36,6 +36,8 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             this.isRowFixed = isRowFixed;
         }
 
+        public IWorksheet Worksheet => this.worksheet;
+
         public uint Column => this.column;
 
         public bool IsColumnFixed => this.isColumnFixed;

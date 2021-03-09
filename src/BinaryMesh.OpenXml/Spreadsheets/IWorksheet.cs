@@ -9,5 +9,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets
         IWorksheetCells Cells { get; }
 
         IRange GetRange(string formula);
+
+        IRange GetRange(uint startColumn, uint startRow, uint endColumn, uint endRow);
     }
 }

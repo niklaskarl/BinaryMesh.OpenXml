@@ -63,6 +63,17 @@ namespace BinaryMesh.OpenXml.Spreadsheets.Internal
             );
         }
 
+        public IRange GetRange(uint startColumn, uint startRow, uint endColumn, uint endRow)
+        {
+            return new OpenXmlRange(
+                this,
+                startColumn, false,
+                startRow, false,
+                endColumn, false,
+                endRow, false
+            );
+        }
+
         private sealed class WorksheetCells : IWorksheetCells
         {
             private readonly OpenXmlWorksheet worksheet;
