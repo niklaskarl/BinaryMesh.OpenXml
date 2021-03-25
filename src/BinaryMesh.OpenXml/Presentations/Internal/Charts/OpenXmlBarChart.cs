@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using DocumentFormat.OpenXml.Drawing.Charts;
+
+using BinaryMesh.OpenXml.Helpers;
 using BinaryMesh.OpenXml.Spreadsheets;
 using BinaryMesh.OpenXml.Spreadsheets.Helpers;
-using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
@@ -16,7 +18,10 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.barChart = barChart;
         }
 
-        public IReadOnlyList<IChartSeries> Series => throw new NotImplementedException();
+        public IReadOnlyList<IBarChartSeries> Series => new EnumerableList<BarChartSeries, IBarChartSeries>(
+            this.barChart.Elements<BarChartSeries>(),
+            barChartSeries => new OpenXmlBarChartSeries(barChartSeries)
+        );
 
         public IBarChart SetDirection(BarChartDirection direction)
         {
@@ -30,6 +35,22 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         {
             BarGrouping barGrouping = this.barChart.GetFirstChild<BarGrouping>() ?? this.barChart.AppendChild(new BarGrouping());
             barGrouping.Val = (BarGroupingValues)grouping;
+
+            return this;
+        }
+
+        public IBarChart SetGapWidth(double ratio)
+        {
+            GapWidth gapWidth = this.barChart.GetFirstChild<GapWidth>() ?? this.barChart.AppendChild(new GapWidth());
+            gapWidth.Val = (ushort)(ratio * 100);
+
+            return this;
+        }
+
+        public IBarChart SetOverlap(double ratio)
+        {
+            Overlap overlap = this.barChart.GetFirstChild<Overlap>() ?? this.barChart.AppendChild(new Overlap());
+            overlap.Val = (sbyte)(ratio * 100);
 
             return this;
         }

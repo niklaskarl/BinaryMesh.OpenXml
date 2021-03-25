@@ -66,6 +66,39 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return new OpenXmlShapeVisual(this.container, shape);
         }
 
+        public IConnectionVisual PrependConnectionVisual(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IConnectionVisual InsertConnectionVisual(string name, int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IConnectionVisual AppendConnectionVisual(string name)
+        {
+            ConnectionShape connectionShape = this.shapeTree.AppendChild(new ConnectionShape()
+            {
+                NonVisualConnectionShapeProperties = new NonVisualConnectionShapeProperties()
+                {
+                    NonVisualDrawingProperties = new NonVisualDrawingProperties()
+                    {
+                        Name = name,
+                        Id = 7 // TODO: calculate
+                    },
+                    NonVisualConnectorShapeDrawingProperties = new NonVisualConnectorShapeDrawingProperties(),
+                    ApplicationNonVisualDrawingProperties = new ApplicationNonVisualDrawingProperties()
+                },
+                ShapeProperties = new ShapeProperties()
+                    .AppendChildFluent(
+                        new Drawing.PresetGeometry() { Preset = Drawing.ShapeTypeValues.Line, AdjustValueList = new Drawing.AdjustValueList() }
+                    )
+            });
+
+            return new OpenXmlConnectionVisual(this.container, connectionShape);
+        }
+
         public ITableVisual PrependTableVisual(string name)
         {
             throw new NotImplementedException();

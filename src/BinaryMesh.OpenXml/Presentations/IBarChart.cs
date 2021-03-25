@@ -24,8 +24,16 @@ namespace BinaryMesh.OpenXml.Presentations
 
         IBarChart SetGrouping(BarChartGrouping grouping);
 
+        IBarChart SetGapWidth(double ratio);
+
+        IBarChart SetOverlap(double ratio);
+
         IBarChart InitializeFromRange(IRange labelRange, IRange categoryRange);
 
-        IReadOnlyList<IChartSeries> Series { get; }
+        IReadOnlyList<IBarChartSeries> Series { get; }
+    }
+
+    public interface IBarChartSeries : IStyleableShape<IBarChartSeries>
+    {
     }
 }

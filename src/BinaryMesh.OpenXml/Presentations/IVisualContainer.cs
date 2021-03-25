@@ -13,6 +13,12 @@ namespace BinaryMesh.OpenXml.Presentations
 
         IShapeVisual AppendShapeVisual(string name);
 
+        IConnectionVisual PrependConnectionVisual(string name);
+
+        IConnectionVisual InsertConnectionVisual(string name, int index);
+
+        IConnectionVisual AppendConnectionVisual(string name);
+
         IChartVisual PrependChartVisual(string name);
 
         IChartVisual InsertChartVisual(string name, int index);

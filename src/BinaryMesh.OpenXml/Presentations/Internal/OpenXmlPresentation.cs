@@ -58,7 +58,10 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             sm => new OpenXmlSlideMaster(this, this.presentationPart.GetPartById(sm.RelationshipId) as SlideMasterPart)
         );
 
-        public IReadOnlyList<ISlide> Slides => throw new NotImplementedException();
+        public IReadOnlyList<ISlide> Slides => new EnumerableList<SlideId, ISlide>(
+            this.presentationPart.Presentation.SlideIdList.Elements<SlideId>(),
+            slideId => new OpenXmlSlide(this, this.presentationPart.GetPartById(slideId.RelationshipId) as SlidePart)
+        );
 
         public ISlide InsertSlide(ISlideLayout slideLayout)
         {

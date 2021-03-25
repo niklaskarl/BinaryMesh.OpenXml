@@ -23,7 +23,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                     visual = new OpenXmlPictureVisual(container, picture);
                     return true;
                 case ConnectionShape connectionShape:
-                    visual = new OpenXmlConnectionShapeVisual(container, connectionShape);
+                    visual = new OpenXmlConnectionVisual(container, connectionShape);
                     return true;
                 default:
                     visual = null;

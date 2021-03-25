@@ -4,6 +4,22 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>BinaryMesh.OpenXml</PackageId>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Version>0.1.0-alpha</Version>
+    <Authors>Niklas Karl</Authors>
+    <Company>BinaryMesh</Company>
+    <PackageTags>Office; OpenXML; Powerpoint; Excel; Word</PackageTags>
+    <Description>
+      .NET Standard Library to create and manipulate Open XML Documents (Word, Excel, Powerpoint).
+    </Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.12.1" />
   </ItemGroup>
