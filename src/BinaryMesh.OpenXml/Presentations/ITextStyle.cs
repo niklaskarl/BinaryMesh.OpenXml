@@ -7,7 +7,7 @@ namespace BinaryMesh.OpenXml.Presentations
     {
         TFluent SetFont(string typeface);
 
-        TFluent SetFontSize(int fontSize);
+        TFluent SetFontSize(double fontSize);
 
         TFluent SetFontColor(OpenXmlColor color);
 

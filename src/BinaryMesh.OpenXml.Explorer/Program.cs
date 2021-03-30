@@ -136,6 +136,9 @@ namespace BinaryMesh.OpenXml.Explorer
                         .SetDirection(BarChartDirection.Column)
                         .SetGrouping(BarChartGrouping.Clustered)
                         .InitializeFromRange(sheet.GetRange("B1:D1"), sheet.GetRange("A2:A5"));
+
+                    barChartSpace.CategoryAxes[0].Text.SetFontSize(8);
+                    barChartSpace.ValueAxes[0].Text.SetFontSize(8);
                 }
 
                 chartSlide.ShapeTree.AppendShapeVisual("Shape 8")

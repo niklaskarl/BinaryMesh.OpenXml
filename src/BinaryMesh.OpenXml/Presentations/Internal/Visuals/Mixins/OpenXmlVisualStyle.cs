@@ -53,7 +53,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             presetGeometry.RemoveAllChildren();
             presetGeometry.Preset = geometry.ShapeType;
-            if (!geometry.AdjustValues.IsDefaultOrEmpty)
+            if (!geometry.AdjustValues.IsDefault)
             {
                 presetGeometry.AppendChild(new AdjustValueList().AppendFluent(geometry.AdjustValues.Select(av => new ShapeGuide() { Name = av.Name, Formula = av.Formula })));
             }
