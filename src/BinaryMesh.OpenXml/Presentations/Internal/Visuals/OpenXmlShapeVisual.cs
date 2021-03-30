@@ -3,9 +3,11 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
 using Drawing = DocumentFormat.OpenXml.Drawing;
 
+using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
+
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlShapeVisual : OpenXmlTextShapeBase<IShapeVisual>, IShapeVisual, IOpenXmlVisual, IVisual
+    internal sealed class OpenXmlShapeVisual : IOpenXmlTextElement, IOpenXmlShapeElement, IOpenXmlVisual, IShapeVisual, IVisual
     {
         private readonly IOpenXmlVisualContainer container;
 
@@ -17,20 +19,26 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.shape = shape;
         }
 
-        protected override IShapeVisual Self => this;
-
         public uint Id => this.shape.NonVisualShapeProperties?.NonVisualDrawingProperties?.Id;
 
         public string Name => this.shape.NonVisualShapeProperties?.NonVisualDrawingProperties?.Name;
 
         public bool IsPlaceholder => this.shape.NonVisualShapeProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape != null;
 
-        protected override OpenXmlElement GetTextBody()
+        public IVisualStyle<IShapeVisual> Style => new OpenXmlVisualStyle<OpenXmlShapeVisual, IShapeVisual>(this);
+
+        public ITextContent<IShapeVisual> Text => new OpenXmlTextContent<OpenXmlShapeVisual, IShapeVisual>(this);
+
+        public IVisualTransform<IShapeVisual> Transform => new OpenXmlVisualTransform<OpenXmlShapeVisual, IShapeVisual>(this);
+
+        IVisualTransform<IVisual> IVisual.Transform => this.Transform;
+
+        public OpenXmlElement GetTextBody()
         {
             return this.shape.TextBody;
         }
 
-        protected override OpenXmlElement GetOrCreateTextBody()
+        public OpenXmlElement GetOrCreateTextBody()
         {
             if (this.shape.TextBody == null)
             {
@@ -40,12 +48,12 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this.shape.TextBody;
         }
 
-        protected override OpenXmlElement GetShapeProperties()
+        public OpenXmlElement GetShapeProperties()
         {
             return this.shape.ShapeProperties;
         }
 
-        protected override OpenXmlElement GetOrCreateShapeProperties()
+        public OpenXmlElement GetOrCreateShapeProperties()
         {
             if (this.shape.ShapeProperties == null)
             {
@@ -55,50 +63,9 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this.shape.ShapeProperties;
         }
 
-        public IShapeVisual AsShapeVisual()
-        {
-            return this;
-        }
-
-        public IShapeVisual SetOffset(long x, long y)
-        {
-            ShapeProperties shapeProperties = this.shape.ShapeProperties ?? (this.shape.ShapeProperties = new ShapeProperties());
-            Drawing.Transform2D transform = shapeProperties.Transform2D ?? (shapeProperties.Transform2D = new Drawing.Transform2D());
-            transform.Offset = new Drawing.Offset()
-            {
-                X = x,
-                Y = y
-            };
-
-            return this;
-        }
-
-        public IShapeVisual SetExtents(long width, long height)
-        {
-            ShapeProperties shapeProperties = this.shape.ShapeProperties ?? (this.shape.ShapeProperties = new ShapeProperties());
-            Drawing.Transform2D transform = shapeProperties.Transform2D ?? (shapeProperties.Transform2D = new Drawing.Transform2D());
-            transform.Extents = new Drawing.Extents()
-            {
-                Cx = width,
-                Cy = height
-            };
-
-            return this;
-        }
-
         public OpenXmlElement CloneForSlide()
         {
             return this.shape.CloneNode(true);
-        }
-
-        IVisual IVisual.SetOffset(long x, long y)
-        {
-            return this.SetOffset(x, y);
-        }
-
-        IVisual IVisual.SetExtents(long width, long height)
-        {
-            return this.SetExtents(width, height);
         }
     }
 }

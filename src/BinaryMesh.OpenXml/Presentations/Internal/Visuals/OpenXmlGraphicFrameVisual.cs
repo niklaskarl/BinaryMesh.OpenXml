@@ -2,11 +2,10 @@ using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
 using Drawing = DocumentFormat.OpenXml.Drawing;
-using Charts = DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal class OpenXmlGraphicFrameVisual : IOpenXmlVisual, IVisual
+    internal abstract class OpenXmlGraphicFrameVisual<TSelf> : IOpenXmlVisual, IVisualTransform<IVisual>, IVisual where TSelf : IVisual
     {
         protected readonly IOpenXmlVisualContainer container;
 
@@ -18,30 +17,23 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.graphicFrame = graphicFrame;
         }
 
+        protected abstract TSelf Self { get; }
+
         public uint Id => this.graphicFrame.NonVisualGraphicFrameProperties?.NonVisualDrawingProperties?.Id;
 
         public string Name => this.graphicFrame.NonVisualGraphicFrameProperties?.NonVisualDrawingProperties?.Name;
 
         public bool IsPlaceholder => this.graphicFrame.NonVisualGraphicFrameProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape?.HasCustomPrompt ?? false;
 
-        public IShapeVisual AsShapeVisual()
+        IVisualTransform<IVisual> IVisual.Transform => this;
+
+        public TSelf SetExtents(OpenXmlSize size)
         {
-            return null;
+            this.SetExtents(size);
+            return this.Self;
         }
 
-        public IVisual SetOffset(long x, long y)
-        {
-            Transform transform = this.graphicFrame.Transform ?? (this.graphicFrame.Transform = new Transform());
-            transform.Offset = new Drawing.Offset()
-            {
-                X = x,
-                Y = y
-            };
-
-            return this;
-        }
-
-        public IVisual SetExtents(long width, long height)
+        public TSelf SetExtents(long width, long height)
         {
             Transform transform = this.graphicFrame.Transform ?? (this.graphicFrame.Transform = new Transform());
             transform.Extents = new Drawing.Extents()
@@ -50,7 +42,58 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 Cy = height
             };
 
-            return this;
+            return this.Self;
+        }
+
+        public TSelf SetOffset(OpenXmlPoint point)
+        {
+            this.SetOffset(point);
+            return this.Self;
+        }
+
+        public TSelf SetOffset(long x, long y)
+        {
+            Transform transform = this.graphicFrame.Transform ?? (this.graphicFrame.Transform = new Transform());
+            transform.Offset = new Drawing.Offset()
+            {
+                X = x,
+                Y = y
+            };
+
+            return this.Self;
+        }
+
+        public TSelf SetRect(OpenXmlRect rect)
+        {
+            this.SetOffset(rect.Left, rect.Top);
+            this.SetExtents(rect.Width, rect.Height);
+
+            return this.Self;
+        }
+
+        IVisual IVisualTransform<IVisual>.SetOffset(long x, long y)
+        {
+            return this.SetOffset(x, y);
+        }
+
+        IVisual IVisualTransform<IVisual>.SetExtents(long width, long height)
+        {
+            return this.SetExtents(width, height);
+        }
+
+        IVisual IVisualTransform<IVisual>.SetOffset(OpenXmlPoint point)
+        {
+            return this.SetOffset(point.Left, point.Top);
+        }
+
+        IVisual IVisualTransform<IVisual>.SetExtents(OpenXmlSize size)
+        {
+            return this.SetExtents(size.Width, size.Height);
+        }
+
+        IVisual IVisualTransform<IVisual>.SetRect(OpenXmlRect rect)
+        {
+            return this.SetRect(rect);
         }
 
         public OpenXmlElement CloneForSlide()

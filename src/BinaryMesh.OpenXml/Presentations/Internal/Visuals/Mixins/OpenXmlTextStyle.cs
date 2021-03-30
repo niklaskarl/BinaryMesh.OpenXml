@@ -2,43 +2,21 @@ using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing;
 
-namespace BinaryMesh.OpenXml.Presentations.Internal
+namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 {
-    internal abstract class OpenXmlTextShapeBase<T> : ITextStyle<T>
+    internal class OpenXmlTextStyle<TElement, TFluent> : ITextStyle<TFluent>
+        where TElement : IOpenXmlTextElement, TFluent
     {
-        protected OpenXmlTextShapeBase()
+        protected readonly TElement element;
+
+        public OpenXmlTextStyle(TElement element)
         {
+            this.element = element;
         }
 
-        protected abstract T Self { get; }
-
-        protected abstract OpenXmlElement GetTextBody();
-
-        protected abstract OpenXmlElement GetOrCreateTextBody();
-
-        protected abstract OpenXmlElement GetShapeProperties();
-
-        protected abstract OpenXmlElement GetOrCreateShapeProperties();
-
-        public T SetText(string text)
+        public TFluent SetFontSize(int fontSize)
         {
-            OpenXmlElement textBody = this.GetOrCreateTextBody();
-            Paragraph paragraph = textBody.GetFirstChild<Paragraph>() ?? new Paragraph();
-            Run run = paragraph.GetFirstChild<Run>() ?? new Run() { RunProperties = new RunProperties() };
-            run.Text = new Text() { Text = text };
-
-            paragraph.RemoveAllChildren<Run>();
-            paragraph.AppendChild(run);
-
-            textBody.RemoveAllChildren<Paragraph>();
-            textBody.AppendChild(paragraph);
-
-            return this.Self;
-        }
-
-        public T SetFontSize(int fontSize)
-        {
-            OpenXmlElement textBody = this.GetOrCreateTextBody();
+            OpenXmlElement textBody = this.element.GetOrCreateTextBody();
             BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>() ?? textBody.AppendChild(new BodyProperties());
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
@@ -50,12 +28,12 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 }
             }
 
-            return this.Self;
+            return this.element;
         }
 
-        public T SetFont(string typeface)
+        public TFluent SetFont(string typeface)
         {
-            OpenXmlElement textBody = this.GetOrCreateTextBody();
+            OpenXmlElement textBody = this.element.GetOrCreateTextBody();
             BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>() ?? textBody.AppendChild(new BodyProperties());
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
@@ -71,12 +49,12 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 }
             }
 
-            return this.Self;
+            return this.element;
         }
 
-        public T SetFontColor(OpenXmlColor color)
+        public TFluent SetFontColor(OpenXmlColor color)
         {
-            OpenXmlElement textBody = this.GetOrCreateTextBody();
+            OpenXmlElement textBody = this.element.GetOrCreateTextBody();
             BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>() ?? textBody.AppendChild(new BodyProperties());
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
@@ -95,21 +73,21 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 }
             }
 
-            return this.Self;
+            return this.element;
         }
 
-        public T SetTextAnchor(TextAnchoringTypeValues anchor)
+        public TFluent SetTextAnchor(TextAnchoringTypeValues anchor)
         {
-            OpenXmlElement textBody = this.GetOrCreateTextBody();
+            OpenXmlElement textBody = this.element.GetOrCreateTextBody();
             BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>() ?? textBody.AppendChild(new BodyProperties());
             bodyProperties.Anchor = anchor;
 
-            return this.Self;
+            return this.element;
         }
 
-        public T SetIsBold(bool bold)
+        public TFluent SetIsBold(bool bold)
         {
-            OpenXmlElement textBody = this.GetOrCreateTextBody();
+            OpenXmlElement textBody = this.element.GetOrCreateTextBody();
             BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>() ?? textBody.AppendChild(new BodyProperties());
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
@@ -121,12 +99,12 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 }
             }
 
-            return this.Self;
+            return this.element;
         }
 
-        public T SetIsItalic(bool italic)
+        public TFluent SetIsItalic(bool italic)
         {
-            OpenXmlElement textBody = this.GetOrCreateTextBody();
+            OpenXmlElement textBody = this.element.GetOrCreateTextBody();
             BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>() ?? textBody.AppendChild(new BodyProperties());
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
@@ -138,43 +116,12 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 }
             }
 
-            return this.Self;
+            return this.element;
         }
 
-        public T SetFill(OpenXmlColor color)
+        public TFluent SetTextMargin(long left, long top, long right, long bottom)
         {
-            OpenXmlElement shapeProperties = this.GetOrCreateShapeProperties();
-            shapeProperties.RemoveAllChildren<NoFill>();
-            shapeProperties.RemoveAllChildren<SolidFill>();
-            shapeProperties.RemoveAllChildren<GradientFill>();
-            shapeProperties.RemoveAllChildren<BlipFill>();
-            shapeProperties.RemoveAllChildren<PatternFill>();
-            shapeProperties.RemoveAllChildren<GroupFill>();
-
-            shapeProperties.AppendChild(new SolidFill().AppendChildFluent(color.CreateColorElement()));
-
-            return this.Self;
-        }
-
-        public T SetStroke(OpenXmlColor color)
-        {
-            OpenXmlElement shapeProperties = this.GetOrCreateShapeProperties();
-            Outline outline = shapeProperties.GetFirstChild<Outline>() ?? shapeProperties.AppendChild(new Outline() { Width = 12700 });
-            outline.RemoveAllChildren<NoFill>();
-            outline.RemoveAllChildren<SolidFill>();
-            outline.RemoveAllChildren<GradientFill>();
-            outline.RemoveAllChildren<BlipFill>();
-            outline.RemoveAllChildren<PatternFill>();
-            outline.RemoveAllChildren<GroupFill>();
-
-            outline.AppendChild(new SolidFill().AppendChildFluent(color.CreateColorElement()));
-
-            return this.Self;
-        }
-
-        public T SetTextMargin(long left, long top, long right, long bottom)
-        {
-            OpenXmlElement textBody = this.GetOrCreateTextBody();
+            OpenXmlElement textBody = this.element.GetOrCreateTextBody();
             BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>() ?? textBody.AppendChild(new BodyProperties());
 
             bodyProperties.LeftInset = (int)left;
@@ -182,7 +129,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             bodyProperties.RightInset = (int)right;
             bodyProperties.BottomInset = (int)bottom;
 
-            return this.Self;
+            return this.element;
         }
     }
 }

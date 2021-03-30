@@ -14,8 +14,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                     visual = new OpenXmlShapeVisual(container, shape);
                     return true;
                 case GraphicFrame graphicFrame:
-                    visual = new OpenXmlGraphicFrameVisual(container, graphicFrame);
-                    return true;
+                    return TryCreateGraphicFrameVisual(container, graphicFrame, out visual);
                 case GroupShape groupShape:
                     visual = new OpenXmlGroupShapeVisual(container, groupShape);
                     return true;
@@ -43,7 +42,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                     visual = new OpenXmlTableVisual(container, graphicFrame);
                     return true;
                 default:
-                    visual = new OpenXmlGraphicFrameVisual(container, graphicFrame);
+                    visual = new OpenXmlGenericGraphicFrameVisual(container, graphicFrame);
                     return true;
             }
         }

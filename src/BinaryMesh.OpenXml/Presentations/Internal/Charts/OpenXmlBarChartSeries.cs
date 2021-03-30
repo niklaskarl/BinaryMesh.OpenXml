@@ -2,10 +2,12 @@ using System;
 using DocumentFormat.OpenXml.Drawing.Charts;
 
 using BinaryMesh.OpenXml.Presentations.Helpers;
+using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
+using DocumentFormat.OpenXml;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlBarChartSeries : IBarChartSeries
+    internal sealed class OpenXmlBarChartSeries : IOpenXmlShapeElement, IBarChartSeries
     {
         private readonly BarChartSeries barChartSeries;
 
@@ -14,18 +16,16 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.barChartSeries = barChartSeries;
         }
 
-        public IBarChartSeries SetFill(OpenXmlColor color)
+        public IVisualStyle<IBarChartSeries> Style => new OpenXmlVisualStyle<OpenXmlBarChartSeries, IBarChartSeries>(this);
+
+        public OpenXmlElement GetShapeProperties()
         {
-            ChartShapeProperties chartShapeProperties = this.barChartSeries.GetFirstChild<ChartShapeProperties>() ?? this.barChartSeries.AppendChild(new ChartShapeProperties());
-            OpenXmlShapeStyler.SetFill(chartShapeProperties, color);
-            return this;
+            return this.barChartSeries.GetFirstChild<ChartShapeProperties>();
         }
 
-        public IBarChartSeries SetStroke(OpenXmlColor color)
+        public OpenXmlElement GetOrCreateShapeProperties()
         {
-            ChartShapeProperties chartShapeProperties = this.barChartSeries.GetFirstChild<ChartShapeProperties>() ?? this.barChartSeries.AppendChild(new ChartShapeProperties());
-            OpenXmlShapeStyler.SetStroke(chartShapeProperties, color);
-            return this;
+            return this.barChartSeries.GetFirstChild<ChartShapeProperties>() ?? this.barChartSeries.AppendChild(new ChartShapeProperties());
         }
     }
 }

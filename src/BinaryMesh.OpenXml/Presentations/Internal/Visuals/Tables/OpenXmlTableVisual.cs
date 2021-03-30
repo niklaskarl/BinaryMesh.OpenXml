@@ -8,7 +8,7 @@ using BinaryMesh.OpenXml.Helpers;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlTableVisual : OpenXmlGraphicFrameVisual, ITableVisual
+    internal sealed class OpenXmlTableVisual : OpenXmlGraphicFrameVisual<ITableVisual>, IVisualTransform<ITableVisual>, ITableVisual
     {
         private readonly Drawing.Table table;
 
@@ -26,6 +26,10 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         public IReadOnlyList<ITableColumn> Columns => new EnumerableList<Drawing.GridColumn, ITableColumn>(this.table.GetFirstChild<Drawing.TableGrid>().Elements<Drawing.GridColumn>(), column => new TableColumn(this, column));
 
         public IReadOnlyList<ITableRow> Rows => new EnumerableList<Drawing.TableRow, ITableRow>(this.table.Elements<Drawing.TableRow>(), row => new TableRow(this, row));
+
+        public IVisualTransform<ITableVisual> Transform => this;
+
+        protected override ITableVisual Self => this;
 
         public ITableColumn AppendColumn(long width)
         {
@@ -81,18 +85,6 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             }
 
             return new TableRow(this, tableRow);
-        }
-
-        ITableVisual ITableVisual.SetOffset(long x, long y)
-        {
-            this.SetOffset(x, y);
-            return this;
-        }
-
-        ITableVisual ITableVisual.SetExtents(long width, long height)
-        {
-            this.SetExtents(width, height);
-            return this;
         }
 
         private sealed class TableColumn : ITableColumn

@@ -7,11 +7,7 @@ namespace BinaryMesh.OpenXml.Presentations
         uint Id { get; }
 
         string Name { get; }
-
-        IShapeVisual AsShapeVisual();
-
-        IVisual SetOffset(long x, long y);
-
-        IVisual SetExtents(long width, long height);
+        
+        IVisualTransform<IVisual> Transform { get; }
     }
 }

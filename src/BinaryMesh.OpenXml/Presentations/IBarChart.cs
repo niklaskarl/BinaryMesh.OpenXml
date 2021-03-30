@@ -33,7 +33,8 @@ namespace BinaryMesh.OpenXml.Presentations
         IReadOnlyList<IBarChartSeries> Series { get; }
     }
 
-    public interface IBarChartSeries : IStyleableShape<IBarChartSeries>
+    public interface IBarChartSeries
     {
+        IVisualStyle<IBarChartSeries> Style { get; }
     }
 }

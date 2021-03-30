@@ -2,10 +2,12 @@ using System;
 
 namespace BinaryMesh.OpenXml.Presentations
 {
-    public interface IShapeVisual : ITextShape<IShapeVisual>, IVisual
+    public interface IShapeVisual : IVisual
     {
-        new IShapeVisual SetOffset(long x, long y);
+        new IVisualTransform<IShapeVisual> Transform { get; }
 
-        new IShapeVisual SetExtents(long width, long height);
+        IVisualStyle<IShapeVisual> Style { get; }
+
+        ITextContent<IShapeVisual> Text { get; }
     }
 }

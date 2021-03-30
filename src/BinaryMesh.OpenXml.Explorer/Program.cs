@@ -52,14 +52,14 @@ namespace BinaryMesh.OpenXml.Explorer
             using (presentation)
             {
                 ISlide titleSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[0]);
-                titleSlide.ShapeTree.Visuals["Titel 1"].AsShapeVisual().SetText("Automated Presentation Documents made easy");
-                titleSlide.ShapeTree.Visuals["Untertitel 2"].AsShapeVisual().SetText("BinaryMesh.OpenXml is an open-source library to easily and intuitively create OpenXml documents");
-                titleSlide.ShapeTree.Visuals["Datumsplatzhalter 3"].AsShapeVisual().SetText("10.10.2020");
+                (titleSlide.ShapeTree.Visuals["Titel 1"] as IShapeVisual).Text.SetText("Automated Presentation Documents made easy");
+                (titleSlide.ShapeTree.Visuals["Untertitel 2"] as IShapeVisual).Text.SetText("BinaryMesh.OpenXml is an open-source library to easily and intuitively create OpenXml documents");
+                (titleSlide.ShapeTree.Visuals["Datumsplatzhalter 3"] as IShapeVisual).Text.SetText("10.10.2020");
 
                 ISlide chartSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
                 IChartVisual pieChartVisual = chartSlide.ShapeTree.AppendChartVisual("Chart 1")
-                    .SetOffset(2032000, 719666)
-                    .SetExtents(8128000, 5418667);
+                    .Transform.SetOffset(2032000, 719666)
+                    .Transform.SetExtents(8128000, 5418667);
 
                 IChartSpace pieChartSpace = pieChartVisual.ChartSpace;
                 using (ISpreadsheetDocument spreadsheet = pieChartSpace.OpenSpreadsheetDocument())
@@ -95,8 +95,8 @@ namespace BinaryMesh.OpenXml.Explorer
                 }
 
                 IChartVisual barChartVisual = chartSlide.ShapeTree.AppendChartVisual("Chart 2")
-                    .SetOffset(2032000, 719666)
-                    .SetExtents(8128000, 5418667);
+                    .Transform.SetOffset(2032000, 719666)
+                    .Transform.SetExtents(8128000, 5418667);
 
                 IChartSpace barChartSpace = barChartVisual.ChartSpace;
                 using (ISpreadsheetDocument spreadsheet = barChartSpace.OpenSpreadsheetDocument())
@@ -137,35 +137,29 @@ namespace BinaryMesh.OpenXml.Explorer
                         .InitializeFromRange(sheet.GetRange("B1:D1"), sheet.GetRange("A2:A5"));
                 }
 
-                chartSlide.ShapeTree.AppendShapeVisual("Shape 7")
-                    .SetOffset(0, 0)
-                    .SetExtents(8128000, 5418667)
-                    .SetText("TEST")
-                    .SetFontSize(8)
-                    .SetIsBold(true);
-
                 chartSlide.ShapeTree.AppendShapeVisual("Shape 8")
-                    .SetOffset(50000, 0)
-                    .SetExtents(8128000, 5418667)
-                    .SetText("TEST 2")
-                    .SetFontSize(8)
-                    .SetIsBold(true)
-                    .SetFill(OpenXmlColor.Accent4)
-                    .SetStroke(OpenXmlColor.Rgb(0, 0, 255));
+                    .Transform.SetOffset(OpenXmlUnit.Cm(3), OpenXmlUnit.Cm(3))
+                    .Transform.SetExtents(OpenXmlUnit.Cm(10), OpenXmlUnit.Cm(10))
+                    .Text.SetText("TEST 2")
+                    .Text.SetFontSize(8)
+                    .Text.SetIsBold(true)
+                    .Style.SetFill(OpenXmlColor.Accent4)
+                    .Style.SetStroke(OpenXmlColor.Rgb(0, 0, 255))
+                    .Style.SetPresetGeometry(OpenXmlPresetGeometry.BuildChevron(28868));
 
                 ISlide tableSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
                 ITableVisual table = tableSlide.ShapeTree.AppendTableVisual("Table 1")
-                    .SetOffset(OpenXmlUnit.Cm(5), OpenXmlUnit.Cm(5));
+                    .Transform.SetOffset(OpenXmlUnit.Cm(5), OpenXmlUnit.Cm(5));
 
                 table.AppendColumn(OpenXmlUnit.Cm(5));
                 table.AppendColumn(OpenXmlUnit.Cm(5));
                 table.AppendRow(OpenXmlUnit.Cm(0));
                 table.AppendRow(OpenXmlUnit.Cm(0));
 
-                table.Cells[0, 0].SetText("Hello").SetFontSize(8).SetFont("Arial");
-                table.Cells[1, 0].SetText("World").SetIsBold(true).SetFont("Comic Sans MS");
-                table.Cells[0, 1].SetText("ABC").SetFontColor(OpenXmlColor.Accent2);
-                table.Cells[1, 1].SetText("123").SetFontColor(OpenXmlColor.Rgb(25, 240, 120));
+                table.Cells[0, 0].Text.SetText("Hello").Text.SetFontSize(8).Text.SetFont("Arial");
+                table.Cells[1, 0].Text.SetText("World").Text.SetIsBold(true).Text.SetFont("Comic Sans MS");
+                table.Cells[0, 1].Text.SetText("ABC").Text.SetFontColor(OpenXmlColor.Accent2);
+                table.Cells[1, 1].Text.SetText("123").Text.SetFontColor(OpenXmlColor.Rgb(25, 240, 120));
 
                 using (Stream stream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite))
                 {

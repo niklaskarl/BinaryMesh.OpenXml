@@ -6,7 +6,7 @@ using Charts = DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlChartVisual : OpenXmlGraphicFrameVisual, IChartVisual
+    internal sealed class OpenXmlChartVisual : OpenXmlGraphicFrameVisual<IChartVisual>, IVisualTransform<IChartVisual>, IChartVisual
     {
         private readonly Charts.Chart chart;
 
@@ -22,16 +22,8 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         public IChartSpace ChartSpace =>
             new OpenXmlChartSpace(this.container.Part.GetPartById(this.chart.GetAttribute("id", "http://schemas.openxmlformats.org/officeDocument/2006/relationships").Value) as ChartPart);
 
-        IChartVisual IChartVisual.SetExtents(long width, long height)
-        {
-            this.SetExtents(width, height);
-            return this;
-        }
+        protected override IChartVisual Self => this;
 
-        IChartVisual IChartVisual.SetOffset(long x, long y)
-        {
-            this.SetOffset(x, y);
-            return this;
-        }
+        public IVisualTransform<IChartVisual> Transform => this;
     }
 }

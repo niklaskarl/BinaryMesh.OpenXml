@@ -1,11 +1,12 @@
 using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
-using Drawing = DocumentFormat.OpenXml.Drawing;
+
+using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlConnectionVisual : IConnectionVisual, IOpenXmlVisual, IVisual
+    internal sealed class OpenXmlConnectionVisual : IOpenXmlShapeElement, IOpenXmlVisual, IConnectionVisual, IVisual
     {
         private readonly IOpenXmlVisualContainer container;
 
@@ -23,12 +24,18 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public bool IsPlaceholder => this.connectionShape.NonVisualConnectionShapeProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape != null;
 
-        private OpenXmlElement GetShapeProperties()
+        public IVisualStyle<IConnectionVisual> Style => new OpenXmlVisualStyle<OpenXmlConnectionVisual, IConnectionVisual>(this);
+
+        public IVisualTransform<IConnectionVisual> Transform => new OpenXmlVisualTransform<OpenXmlConnectionVisual, IConnectionVisual>(this);
+
+        IVisualTransform<IVisual> IVisual.Transform => this.Transform;
+
+        public OpenXmlElement GetShapeProperties()
         {
             return this.connectionShape.ShapeProperties;
         }
 
-        private OpenXmlElement GetOrCreateShapeProperties()
+        public OpenXmlElement GetOrCreateShapeProperties()
         {
             if (this.connectionShape.ShapeProperties == null)
             {
@@ -38,66 +45,9 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this.connectionShape.ShapeProperties;
         }
 
-        public IShapeVisual AsShapeVisual()
-        {
-            return null;
-        }
-
-        public IConnectionVisual SetOffset(long x, long y)
-        {
-            ShapeProperties shapeProperties = this.connectionShape.ShapeProperties ?? (this.connectionShape.ShapeProperties = new ShapeProperties());
-            Drawing.Transform2D transform = shapeProperties.Transform2D ?? (shapeProperties.Transform2D = new Drawing.Transform2D());
-            transform.Offset = new Drawing.Offset()
-            {
-                X = x,
-                Y = y
-            };
-
-            return this;
-        }
-
-        public IConnectionVisual SetExtents(long width, long height)
-        {
-            ShapeProperties shapeProperties = this.connectionShape.ShapeProperties ?? (this.connectionShape.ShapeProperties = new ShapeProperties());
-            Drawing.Transform2D transform = shapeProperties.Transform2D ?? (shapeProperties.Transform2D = new Drawing.Transform2D());
-            transform.Extents = new Drawing.Extents()
-            {
-                Cx = width,
-                Cy = height
-            };
-
-            return this;
-        }
-
-        public IConnectionVisual SetStroke(OpenXmlColor color)
-        {
-            OpenXmlElement shapeProperties = this.GetOrCreateShapeProperties();
-            Drawing.Outline outline = shapeProperties.GetFirstChild<Drawing.Outline>() ?? shapeProperties.AppendChild(new Drawing.Outline() { Width = 12700 });
-            outline.RemoveAllChildren<Drawing.NoFill>();
-            outline.RemoveAllChildren<Drawing.SolidFill>();
-            outline.RemoveAllChildren<Drawing.GradientFill>();
-            outline.RemoveAllChildren<Drawing.BlipFill>();
-            outline.RemoveAllChildren<Drawing.PatternFill>();
-            outline.RemoveAllChildren<Drawing.GroupFill>();
-
-            outline.AppendChild(new Drawing.SolidFill().AppendChildFluent(color.CreateColorElement()));
-
-            return this;
-        }
-
         public OpenXmlElement CloneForSlide()
         {
             return this.connectionShape.CloneNode(true);
-        }
-
-        IVisual IVisual.SetOffset(long x, long y)
-        {
-            return this.SetOffset(x, y);
-        }
-
-        IVisual IVisual.SetExtents(long width, long height)
-        {
-            return this.SetExtents(width, height);
         }
     }
 }

@@ -3,8 +3,8 @@ using DocumentFormat.OpenXml.Drawing;
 
 namespace BinaryMesh.OpenXml.Presentations
 {
-    public interface IEditableText<TSelf> : IStyleableText<TSelf>
+    public interface ITextContent<out TFluent> : ITextStyle<TFluent>
     {
-        TSelf SetText(string text);
+        TFluent SetText(string text);
     }
 }

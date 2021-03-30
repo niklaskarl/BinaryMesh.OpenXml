@@ -1,11 +1,12 @@
 using System;
 using Drawing = DocumentFormat.OpenXml.Drawing;
-
 using DocumentFormat.OpenXml;
+
+using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlTableCell : OpenXmlTextShapeBase<ITableCell>, ITableCell
+    internal sealed class OpenXmlTableCell : IOpenXmlTextElement, IOpenXmlShapeElement, ITableCell
     {
         private readonly OpenXmlTableVisual tableVisual;
 
@@ -17,14 +18,16 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.tableCell = tableCell;
         }
 
-        protected override ITableCell Self => this;
+        public IVisualStyle<ITableCell> Style => new OpenXmlVisualStyle<OpenXmlTableCell, ITableCell>(this);
 
-        protected override OpenXmlElement GetTextBody()
+        public ITextContent<ITableCell> Text => new OpenXmlTextContent<OpenXmlTableCell, ITableCell>(this);
+
+        public OpenXmlElement GetTextBody()
         {
             return this.tableCell.TextBody;
         }
 
-        protected override OpenXmlElement GetOrCreateTextBody()
+        public OpenXmlElement GetOrCreateTextBody()
         {
             if (this.tableCell.TextBody == null)
             {
@@ -34,12 +37,12 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this.tableCell.TextBody;
         }
 
-        protected override OpenXmlElement GetShapeProperties()
+        public OpenXmlElement GetShapeProperties()
         {
             return this.tableCell.TableCellProperties;
         }
 
-        protected override OpenXmlElement GetOrCreateShapeProperties()
+        public OpenXmlElement GetOrCreateShapeProperties()
         {
             if (this.tableCell.TableCellProperties == null)
             {

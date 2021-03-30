@@ -5,9 +5,7 @@ namespace BinaryMesh.OpenXml.Presentations
 {
     public interface ITableVisual : IVisual
     {
-        new ITableVisual SetOffset(long x, long y);
-
-        new ITableVisual SetExtents(long width, long height);
+        new IVisualTransform<ITableVisual> Transform { get; }
 
         ITableCellCollection Cells { get; }
 
@@ -33,7 +31,10 @@ namespace BinaryMesh.OpenXml.Presentations
     {
     }
 
-    public interface ITableCell : ITextShape<ITableCell>
+    public interface ITableCell
     {
+        IVisualStyle<ITableCell> Style { get; }
+
+        ITextContent<ITableCell> Text { get; }
     }
 }

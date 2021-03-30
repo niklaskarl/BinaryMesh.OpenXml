@@ -1,11 +1,12 @@
 using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
-using Drawing = DocumentFormat.OpenXml.Drawing;
+
+using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlGroupShapeVisual : IOpenXmlVisual, IVisual
+    internal sealed class OpenXmlGroupShapeVisual : IOpenXmlShapeElement, IOpenXmlVisual, IVisual
     {
         private readonly IOpenXmlVisualContainer container;
 
@@ -23,35 +24,23 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public bool IsPlaceholder => this.groupShape.NonVisualGroupShapeProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape != null;
 
-        public IShapeVisual AsShapeVisual()
+        public IVisualTransform<IVisual> Transform => new OpenXmlVisualTransform<OpenXmlGroupShapeVisual, IVisual>(this);
+
+        IVisualTransform<IVisual> IVisual.Transform => this.Transform;
+
+        public OpenXmlElement GetShapeProperties()
         {
-            return null;
+            return this.groupShape.GroupShapeProperties;
         }
 
-        public IVisual SetOffset(long x, long y)
+        public OpenXmlElement GetOrCreateShapeProperties()
         {
-            GroupShapeProperties groupShapeProperties = this.groupShape.GroupShapeProperties ?? (this.groupShape.GroupShapeProperties = new GroupShapeProperties());
-            Drawing.TransformGroup transform = groupShapeProperties.TransformGroup ?? (groupShapeProperties.TransformGroup = new Drawing.TransformGroup());
-            transform.Offset = new Drawing.Offset()
+            if (this.groupShape.GroupShapeProperties == null)
             {
-                X = x,
-                Y = y
-            };
+                this.groupShape.GroupShapeProperties = new GroupShapeProperties();
+            }
 
-            return this;
-        }
-
-        public IVisual SetExtents(long width, long height)
-        {
-            GroupShapeProperties groupShapeProperties = this.groupShape.GroupShapeProperties ?? (this.groupShape.GroupShapeProperties = new GroupShapeProperties());
-            Drawing.TransformGroup transform = groupShapeProperties.TransformGroup ?? (groupShapeProperties.TransformGroup = new Drawing.TransformGroup());
-            transform.Extents = new Drawing.Extents()
-            {
-                Cx = width,
-                Cy = height
-            };
-
-            return this;
+            return this.groupShape.GroupShapeProperties;
         }
 
         public OpenXmlElement CloneForSlide()

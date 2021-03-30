@@ -1,11 +1,12 @@
 using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
-using Drawing = DocumentFormat.OpenXml.Drawing;
+
+using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlPictureVisual : IOpenXmlVisual, IVisual
+    internal sealed class OpenXmlPictureVisual : IOpenXmlShapeElement, IOpenXmlVisual, IVisual
     {
         private readonly IOpenXmlVisualContainer container;
 
@@ -23,35 +24,23 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public bool IsPlaceholder => this.picture.NonVisualPictureProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape != null;
 
-        public IShapeVisual AsShapeVisual()
+        public IVisualTransform<IVisual> Transform => new OpenXmlVisualTransform<OpenXmlPictureVisual, IVisual>(this);
+
+        IVisualTransform<IVisual> IVisual.Transform => this.Transform;
+
+        public OpenXmlElement GetShapeProperties()
         {
-            return null;
+            return this.picture.ShapeProperties;
         }
 
-        public IVisual SetOffset(long x, long y)
+        public OpenXmlElement GetOrCreateShapeProperties()
         {
-            ShapeProperties shapeProperties = this.picture.ShapeProperties ?? (this.picture.ShapeProperties = new ShapeProperties());
-            Drawing.Transform2D transform = shapeProperties.Transform2D ?? (shapeProperties.Transform2D = new Drawing.Transform2D());
-            transform.Offset = new Drawing.Offset()
+            if (this.picture.ShapeProperties == null)
             {
-                X = x,
-                Y = y
-            };
+                this.picture.ShapeProperties = new ShapeProperties();
+            }
 
-            return this;
-        }
-
-        public IVisual SetExtents(long width, long height)
-        {
-            ShapeProperties shapeProperties = this.picture.ShapeProperties ?? (this.picture.ShapeProperties = new ShapeProperties());
-            Drawing.Transform2D transform = shapeProperties.Transform2D ?? (shapeProperties.Transform2D = new Drawing.Transform2D());
-            transform.Extents = new Drawing.Extents()
-            {
-                Cx = width,
-                Cy = height
-            };
-
-            return this;
+            return this.picture.ShapeProperties;
         }
 
         public OpenXmlElement CloneForSlide()
