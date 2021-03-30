@@ -11,6 +11,8 @@ namespace BinaryMesh.OpenXml.Presentations
 
         TFluent SetFontColor(OpenXmlColor color);
 
+        TFluent SetTextAlign(TextAlignmentTypeValues align);
+
         TFluent SetTextAnchor(TextAnchoringTypeValues anchor);
 
         TFluent SetTextMargin(long left, long top, long right, long bottom);

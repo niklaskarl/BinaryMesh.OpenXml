@@ -76,6 +76,19 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
             return this.element;
         }
 
+        public TFluent SetTextAlign(TextAlignmentTypeValues align)
+        {
+            OpenXmlElement textBody = this.element.GetOrCreateTextBody();
+
+            foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
+            {
+                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.PrependChild(new ParagraphProperties());
+                paragraphProperties.Alignment = align;
+            }
+
+            return this.element;
+        }
+
         public TFluent SetTextAnchor(TextAnchoringTypeValues anchor)
         {
             OpenXmlElement textBody = this.element.GetOrCreateTextBody();

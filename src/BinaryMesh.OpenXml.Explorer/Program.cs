@@ -5,6 +5,7 @@ using System.Linq;
 
 using BinaryMesh.OpenXml.Presentations;
 using BinaryMesh.OpenXml.Spreadsheets;
+using DocumentFormat.OpenXml.Drawing;
 
 namespace BinaryMesh.OpenXml.Explorer
 {
@@ -142,6 +143,8 @@ namespace BinaryMesh.OpenXml.Explorer
                     .Transform.SetExtents(OpenXmlUnit.Cm(10), OpenXmlUnit.Cm(10))
                     .Text.SetText("TEST 2")
                     .Text.SetFontSize(8)
+                    .Text.SetTextAlign(TextAlignmentTypeValues.Center)
+                    .Text.SetTextAnchor(TextAnchoringTypeValues.Center)
                     .Text.SetIsBold(true)
                     .Style.SetFill(OpenXmlColor.Accent4)
                     .Style.SetStroke(OpenXmlColor.Rgb(0, 0, 255))
