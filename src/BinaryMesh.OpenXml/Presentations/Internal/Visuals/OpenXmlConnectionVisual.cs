@@ -1,12 +1,13 @@
 using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
+using Drawing = DocumentFormat.OpenXml.Drawing;
 
 using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlConnectionVisual : IOpenXmlShapeElement, IOpenXmlVisual, IConnectionVisual, IVisual
+    internal sealed class OpenXmlConnectionVisual : IOpenXmlShapeElement, IOpenXmlTransformElement, IOpenXmlVisual, IConnectionVisual, IVisual
     {
         private readonly IOpenXmlVisualContainer container;
 
@@ -29,6 +30,27 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         public IVisualTransform<IConnectionVisual> Transform => new OpenXmlVisualTransform<OpenXmlConnectionVisual, IConnectionVisual>(this);
 
         IVisualTransform<IVisual> IVisual.Transform => this.Transform;
+
+        public OpenXmlElement GetTransform()
+        {
+            return this.connectionShape.ShapeProperties?.Transform2D;
+        }
+
+        public OpenXmlElement GetOrCreateTransform()
+        {
+            if (this.connectionShape.ShapeProperties == null)
+            {
+                this.connectionShape.ShapeProperties = new ShapeProperties();
+            }
+
+            
+            if (this.connectionShape.ShapeProperties.Transform2D == null)
+            {
+                this.connectionShape.ShapeProperties.Transform2D = new Drawing.Transform2D();
+            }
+
+            return this.connectionShape.ShapeProperties.Transform2D;
+        }
 
         public OpenXmlElement GetShapeProperties()
         {

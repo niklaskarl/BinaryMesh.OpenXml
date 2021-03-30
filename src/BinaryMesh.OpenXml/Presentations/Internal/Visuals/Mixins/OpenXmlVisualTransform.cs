@@ -5,7 +5,7 @@ using DocumentFormat.OpenXml.Drawing;
 namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 {
     internal class OpenXmlVisualTransform<TElement, TFluent> : IVisualTransform<TFluent>
-        where TElement : IOpenXmlShapeElement, TFluent
+        where TElement : IOpenXmlTransformElement, TFluent
     {
         protected readonly TElement element;
 
@@ -21,13 +21,10 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
         public TFluent SetOffset(long x, long y)
         {
-            OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
-            Transform2D transform = shapeProperties.GetFirstChild<Transform2D>() ?? shapeProperties.AppendChild(new Transform2D());
-            transform.Offset = new Offset()
-            {
-                X = x,
-                Y = y
-            };
+            OpenXmlElement transform = this.element.GetOrCreateTransform();
+            Offset offset = transform.GetFirstChild<Offset>() ?? transform.AppendChild(new Offset());
+            offset.X = x;
+            offset.Y = y;
 
             return this.element;
         }
@@ -39,13 +36,10 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
         public TFluent SetExtents(long width, long height)
         {
-            OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
-            Transform2D transform = shapeProperties.GetFirstChild<Transform2D>() ?? shapeProperties.AppendChild(new Transform2D());
-            transform.Extents = new Extents()
-            {
-                Cx = width,
-                Cy = height
-            };
+            OpenXmlElement transform = this.element.GetOrCreateTransform();
+            Extents extents = transform.GetFirstChild<Extents>() ?? transform.AppendChild(new Extents());
+            extents.Cx = width;
+            extents.Cy = height;
 
             return this.element;
         }

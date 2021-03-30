@@ -7,5 +7,9 @@ namespace BinaryMesh.OpenXml.Presentations
     public interface IChartAxis
     {
         uint Id { get; }
+
+        IVisualStyle<IChartAxis> Style { get; }
+
+        ITextStyle<IChartAxis> Text { get; }
     }
 }

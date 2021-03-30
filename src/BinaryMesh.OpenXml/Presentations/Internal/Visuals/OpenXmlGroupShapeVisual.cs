@@ -1,12 +1,13 @@
 using System;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
+using Drawing = DocumentFormat.OpenXml.Drawing;
 
 using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlGroupShapeVisual : IOpenXmlShapeElement, IOpenXmlVisual, IVisual
+    internal sealed class OpenXmlGroupShapeVisual : IOpenXmlShapeElement, IOpenXmlTransformElement, IOpenXmlVisual, IVisual
     {
         private readonly IOpenXmlVisualContainer container;
 
@@ -27,6 +28,27 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         public IVisualTransform<IVisual> Transform => new OpenXmlVisualTransform<OpenXmlGroupShapeVisual, IVisual>(this);
 
         IVisualTransform<IVisual> IVisual.Transform => this.Transform;
+
+        public OpenXmlElement GetTransform()
+        {
+            return this.groupShape.GroupShapeProperties?.TransformGroup;
+        }
+
+        public OpenXmlElement GetOrCreateTransform()
+        {
+            if (this.groupShape.GroupShapeProperties == null)
+            {
+                this.groupShape.GroupShapeProperties = new GroupShapeProperties();
+            }
+
+            
+            if (this.groupShape.GroupShapeProperties.TransformGroup == null)
+            {
+                this.groupShape.GroupShapeProperties.TransformGroup = new Drawing.TransformGroup();
+            }
+
+            return this.groupShape.GroupShapeProperties.TransformGroup;
+        }
 
         public OpenXmlElement GetShapeProperties()
         {

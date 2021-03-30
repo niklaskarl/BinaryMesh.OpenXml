@@ -25,9 +25,9 @@ namespace BinaryMesh.OpenXml.Presentations
     {
         ISpreadsheetDocument OpenSpreadsheetDocument();
 
-        // IReadOnlyList<IChartAxis> CategoryAxes { get; }
+        IReadOnlyList<IChartAxis> CategoryAxes { get; }
 
-        // IReadOnlyList<IChartAxis> ValueAxes { get; }
+        IReadOnlyList<IChartAxis> ValueAxes { get; }
 
         CartesianAxes AppendCartesianAxes();
 

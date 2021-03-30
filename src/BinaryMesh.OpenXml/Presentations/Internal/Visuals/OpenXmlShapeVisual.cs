@@ -7,7 +7,7 @@ using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlShapeVisual : IOpenXmlTextElement, IOpenXmlShapeElement, IOpenXmlVisual, IShapeVisual, IVisual
+    internal sealed class OpenXmlShapeVisual : IOpenXmlTextElement, IOpenXmlShapeElement, IOpenXmlTransformElement, IOpenXmlVisual, IShapeVisual, IVisual
     {
         private readonly IOpenXmlVisualContainer container;
 
@@ -46,6 +46,27 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             }
 
             return this.shape.TextBody;
+        }
+
+        public OpenXmlElement GetTransform()
+        {
+            return this.shape.ShapeProperties?.Transform2D;
+        }
+
+        public OpenXmlElement GetOrCreateTransform()
+        {
+            if (this.shape.ShapeProperties == null)
+            {
+                this.shape.ShapeProperties = new ShapeProperties();
+            }
+
+            
+            if (this.shape.ShapeProperties.Transform2D == null)
+            {
+                this.shape.ShapeProperties.Transform2D = new Drawing.Transform2D();
+            }
+
+            return this.shape.ShapeProperties.Transform2D;
         }
 
         public OpenXmlElement GetShapeProperties()

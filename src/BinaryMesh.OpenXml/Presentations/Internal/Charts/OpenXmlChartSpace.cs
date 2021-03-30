@@ -6,6 +6,7 @@ using Drawing = DocumentFormat.OpenXml.Drawing;
 
 using BinaryMesh.OpenXml.Spreadsheets;
 using BinaryMesh.OpenXml.Spreadsheets.Internal;
+using System.Collections.Generic;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
@@ -19,6 +20,34 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         }
 
         public ChartPart ChartPart => this.chartPart;
+
+        public IReadOnlyList<IChartAxis> CategoryAxes
+        {
+            get
+            {
+                IEnumerable<CategoryAxis> axes = this.chartPart.ChartSpace
+                    ?.GetFirstChild<Chart>()
+                    ?.GetFirstChild<PlotArea>()
+                    ?.GetFirstChild<ValueAxis>()
+                    ?.Elements<CategoryAxis>() ?? Enumerable.Empty<CategoryAxis>();
+
+                return axes.Select(axis => new OpenXmlChartAxisBase(axis)).ToList();
+            }
+        }
+
+        public IReadOnlyList<IChartAxis> ValueAxes
+        {
+            get
+            {
+                IEnumerable<ValueAxis> axes = this.chartPart.ChartSpace
+                    ?.GetFirstChild<Chart>()
+                    ?.GetFirstChild<PlotArea>()
+                    ?.GetFirstChild<ValueAxis>()
+                    ?.Elements<ValueAxis>() ?? Enumerable.Empty<ValueAxis>();
+
+                return axes.Select(axis => new OpenXmlChartAxisBase(axis)).ToList();
+            }
+        }
 
         public ISpreadsheetDocument OpenSpreadsheetDocument()
         {
