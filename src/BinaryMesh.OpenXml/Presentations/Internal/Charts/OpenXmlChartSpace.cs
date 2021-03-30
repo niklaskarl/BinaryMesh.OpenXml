@@ -28,7 +28,6 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 IEnumerable<CategoryAxis> axes = this.chartPart.ChartSpace
                     ?.GetFirstChild<Chart>()
                     ?.GetFirstChild<PlotArea>()
-                    ?.GetFirstChild<ValueAxis>()
                     ?.Elements<CategoryAxis>() ?? Enumerable.Empty<CategoryAxis>();
 
                 return axes.Select(axis => new OpenXmlChartAxisBase(axis)).ToList();
@@ -42,7 +41,6 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 IEnumerable<ValueAxis> axes = this.chartPart.ChartSpace
                     ?.GetFirstChild<Chart>()
                     ?.GetFirstChild<PlotArea>()
-                    ?.GetFirstChild<ValueAxis>()
                     ?.Elements<ValueAxis>() ?? Enumerable.Empty<ValueAxis>();
 
                 return axes.Select(axis => new OpenXmlChartAxisBase(axis)).ToList();
