@@ -21,7 +21,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
             {
-                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.AppendChild(new ParagraphProperties());
+                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.PrependChild(new ParagraphProperties());
                 DefaultRunProperties defaultRunProperties = paragraphProperties.GetFirstChild<DefaultRunProperties>() ?? paragraphProperties.AppendChild(new DefaultRunProperties());
                 defaultRunProperties.FontSize = (int)(fontSize * 100);
 
@@ -42,7 +42,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
             {
-                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.AppendChild(new ParagraphProperties());
+                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.PrependChild(new ParagraphProperties());
                 DefaultRunProperties defaultRunProperties = paragraphProperties.GetFirstChild<DefaultRunProperties>() ?? paragraphProperties.AppendChild(new DefaultRunProperties());
                 defaultRunProperties.RemoveAllChildren<LatinFont>();
                 defaultRunProperties.RemoveAllChildren<ComplexScriptFont>();
@@ -71,7 +71,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
             {
-                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.AppendChild(new ParagraphProperties());
+                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.PrependChild(new ParagraphProperties());
                 DefaultRunProperties defaultRunProperties = paragraphProperties.GetFirstChild<DefaultRunProperties>() ?? paragraphProperties.AppendChild(new DefaultRunProperties());
                 defaultRunProperties.RemoveAllChildren<NoFill>();
                 defaultRunProperties.RemoveAllChildren<SolidFill>();
@@ -128,7 +128,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
             {
-                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.AppendChild(new ParagraphProperties());
+                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.PrependChild(new ParagraphProperties());
                 DefaultRunProperties defaultRunProperties = paragraphProperties.GetFirstChild<DefaultRunProperties>() ?? paragraphProperties.AppendChild(new DefaultRunProperties());
                 defaultRunProperties.Bold = bold;
 
@@ -149,7 +149,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             foreach (Paragraph paragraph in textBody.Elements<Paragraph>())
             {
-                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.AppendChild(new ParagraphProperties());
+                ParagraphProperties paragraphProperties = paragraph.GetFirstChild<ParagraphProperties>() ?? paragraph.PrependChild(new ParagraphProperties());
                 DefaultRunProperties defaultRunProperties = paragraphProperties.GetFirstChild<DefaultRunProperties>() ?? paragraphProperties.AppendChild(new DefaultRunProperties());
                 defaultRunProperties.Italic = italic;
 
