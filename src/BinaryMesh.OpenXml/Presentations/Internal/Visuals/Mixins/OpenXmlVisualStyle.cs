@@ -30,6 +30,21 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
             return this.element;
         }
 
+        public TFluent SetNoFill()
+        {
+            OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
+            shapeProperties.RemoveAllChildren<NoFill>();
+            shapeProperties.RemoveAllChildren<SolidFill>();
+            shapeProperties.RemoveAllChildren<GradientFill>();
+            shapeProperties.RemoveAllChildren<BlipFill>();
+            shapeProperties.RemoveAllChildren<PatternFill>();
+            shapeProperties.RemoveAllChildren<GroupFill>();
+
+            shapeProperties.AppendChild(new NoFill());
+
+            return this.element;
+        }
+
         public TFluent SetStroke(OpenXmlColor color)
         {
             OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
