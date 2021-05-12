@@ -5,10 +5,10 @@ using DocumentFormat.OpenXml.Drawing;
 namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 {
     internal class OpenXmlTextContent<TElement, TFluent> : OpenXmlTextStyle<TElement, TFluent>, ITextContent<TFluent>, ITextStyle<TFluent>
-        where TElement : IOpenXmlTextElement, TFluent
+        where TElement : IOpenXmlTextElement
     {
-        public OpenXmlTextContent(TElement element)
-            : base(element)
+        public OpenXmlTextContent(TElement element, TFluent result)
+            : base(element, result)
         {
         }
 
@@ -25,7 +25,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
             textBody.RemoveAllChildren<Paragraph>();
             textBody.AppendChild(paragraph);
 
-            return this.element;
+            return this.result;
         }
     }
 }

@@ -25,7 +25,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public bool IsPlaceholder => this.connectionShape.NonVisualConnectionShapeProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape != null;
 
-        public IVisualStyle<IConnectionVisual> Style => new OpenXmlVisualStyle<OpenXmlConnectionVisual, IConnectionVisual>(this);
+        public IVisualStyle<IConnectionVisual> Style => new OpenXmlVisualStyle<OpenXmlConnectionVisual, IConnectionVisual>(this, this);
 
         public IVisualTransform<IConnectionVisual> Transform => new OpenXmlVisualTransform<OpenXmlConnectionVisual, IConnectionVisual>(this);
 

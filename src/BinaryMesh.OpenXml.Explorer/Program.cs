@@ -92,7 +92,13 @@ namespace BinaryMesh.OpenXml.Explorer
                         .SetFill(0, "00FFFF")
                         .SetFill(1, "FFFFFF")
                         .SetFill(2, "FFFF00")
-                        .SetFill(3, "FF0000");
+                        .SetFill(3, "FF0000")
+                        .DataLabel.SetShowValue(true)
+                        .DataLabel.SetShowSeriesName(false)
+                        .DataLabel.SetShowCategoryName(false)
+                        .DataLabel.SetShowLegendKey(false)
+                        .DataLabel.SetShowPercent(false)
+                        .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFFFFFF));;
                 }
 
                 IChartVisual barChartVisual = chartSlide.ShapeTree.AppendChartVisual("Chart 2")
@@ -132,10 +138,19 @@ namespace BinaryMesh.OpenXml.Explorer
                     sheet.Cells["D5"].SetValue(12345);
 
                     CartesianAxes axes = barChartSpace.AppendCartesianAxes();
+                    axes.CategoryAxis.SetVisibility(false);
+
                     IBarChart barChart = barChartSpace.InsertBarChart(axes)
                         .SetDirection(BarChartDirection.Column)
                         .SetGrouping(BarChartGrouping.Clustered)
                         .InitializeFromRange(sheet.GetRange("B1:D1"), sheet.GetRange("A2:A5"));
+
+                    barChart.Series[0]
+                        .DataLabel.SetShowValue(true)
+                        .DataLabel.SetShowSeriesName(false)
+                        .DataLabel.SetShowCategoryName(false)
+                        .DataLabel.SetShowLegendKey(false)
+                        .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFFFFFF));
 
                     barChartSpace.CategoryAxes[0].Text.SetFontSize(8);
                     barChartSpace.ValueAxes[0].Text.SetFontSize(8);

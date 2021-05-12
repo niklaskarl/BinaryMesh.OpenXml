@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlChartSeries : IChartSeries
+    internal sealed class OpenXmlChartSeries : IChartSeries, IOpenXmlDataLabelElement
     {
         private readonly OpenXmlElement series;
 
@@ -16,6 +16,8 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         {
             this.series = series;
         }
+
+        public IDataLabel<IChartSeries> DataLabel => new OpenXmlDataLabel<OpenXmlChartSeries, IChartSeries>(this, this);
 
         public IChartSeries SetText(IRange range)
         {
@@ -147,6 +149,16 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             }
 
             return dataPoint;
+        }
+
+        public OpenXmlElement GetDataLabel()
+        {
+            return this.series.GetFirstChild<DataLabels>();
+        }
+
+        public OpenXmlElement GetOrCreateDataLabel()
+        {
+            return this.series.GetFirstChild<DataLabels>() ?? this.series.AppendChild(new DataLabels());
         }
 
         private void RemoveFill(DataPoint dataPoint)

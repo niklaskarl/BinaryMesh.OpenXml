@@ -17,9 +17,17 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public uint Id => axis.GetFirstChild<AxisId>().Val;
 
-        public IVisualStyle<IChartAxis> Style => new OpenXmlVisualStyle<OpenXmlChartAxisBase, IChartAxis>(this);
+        public IVisualStyle<IChartAxis> Style => new OpenXmlVisualStyle<OpenXmlChartAxisBase, IChartAxis>(this, this);
 
-        public ITextStyle<IChartAxis> Text => new OpenXmlTextStyle<OpenXmlChartAxisBase, IChartAxis>(this);
+        public ITextStyle<IChartAxis> Text => new OpenXmlTextStyle<OpenXmlChartAxisBase, IChartAxis>(this, this);
+
+        public IChartAxis SetVisibility(bool value)
+        {
+            Delete delete = this.axis.GetFirstChild<Delete>() ?? this.axis.AppendChild(new Delete());
+            delete.Val = !value;
+
+            return this;
+        }
 
         public OpenXmlElement GetOrCreateShapeProperties()
         {

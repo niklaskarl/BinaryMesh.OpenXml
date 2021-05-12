@@ -5,13 +5,16 @@ using DocumentFormat.OpenXml.Drawing;
 namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 {
     internal class OpenXmlTextStyle<TElement, TFluent> : ITextStyle<TFluent>
-        where TElement : IOpenXmlTextElement, TFluent
+        where TElement : IOpenXmlTextElement
     {
         protected readonly TElement element;
 
-        public OpenXmlTextStyle(TElement element)
+        protected readonly TFluent result;
+
+        public OpenXmlTextStyle(TElement element, TFluent result)
         {
             this.element = element;
+            this.result = result;
         }
 
         public TFluent SetFontSize(double fontSize)
@@ -32,7 +35,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
                 }
             }
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetFont(string typeface)
@@ -61,7 +64,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
                 }
             }
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetFontColor(OpenXmlColor color)
@@ -96,7 +99,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
                 }
             }
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetTextAlign(TextAlignmentTypeValues align)
@@ -109,7 +112,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
                 paragraphProperties.Alignment = align;
             }
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetTextAnchor(TextAnchoringTypeValues anchor)
@@ -118,7 +121,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
             BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>() ?? textBody.AppendChild(new BodyProperties());
             bodyProperties.Anchor = anchor;
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetIsBold(bool bold)
@@ -139,7 +142,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
                 }
             }
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetIsItalic(bool italic)
@@ -160,7 +163,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
                 }
             }
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetTextMargin(long left, long top, long right, long bottom)
@@ -173,7 +176,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
             bodyProperties.RightInset = (int)right;
             bodyProperties.BottomInset = (int)bottom;
 
-            return this.element;
+            return this.result;
         }
     }
 }

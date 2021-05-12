@@ -6,13 +6,16 @@ using DocumentFormat.OpenXml.Drawing;
 namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 {
     internal class OpenXmlVisualStyle<TElement, TFluent> : IVisualStyle<TFluent>
-        where TElement : IOpenXmlShapeElement, TFluent
+        where TElement : IOpenXmlShapeElement
     {
         protected readonly TElement element;
 
-        public OpenXmlVisualStyle(TElement element)
+        protected readonly TFluent result;
+
+        public OpenXmlVisualStyle(TElement element, TFluent result)
         {
             this.element = element;
+            this.result = result;
         }
 
         public TFluent SetFill(OpenXmlColor color)
@@ -27,7 +30,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             shapeProperties.AppendChild(new SolidFill().AppendChildFluent(color.CreateColorElement()));
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetNoFill()
@@ -42,7 +45,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             shapeProperties.AppendChild(new NoFill());
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetStroke(OpenXmlColor color)
@@ -58,7 +61,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
 
             outline.AppendChild(new SolidFill().AppendChildFluent(color.CreateColorElement()));
 
-            return this.element;
+            return this.result;
         }
 
         public TFluent SetPresetGeometry(OpenXmlPresetGeometry geometry)
@@ -73,7 +76,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal.Mixins
                 presetGeometry.AppendChild(new AdjustValueList().AppendFluent(geometry.AdjustValues.Select(av => new ShapeGuide() { Name = av.Name, Formula = av.Formula })));
             }
 
-            return this.element;
+            return this.result;
         }
     }
 }

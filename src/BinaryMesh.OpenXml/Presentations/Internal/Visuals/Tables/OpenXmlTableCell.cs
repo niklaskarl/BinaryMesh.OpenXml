@@ -18,9 +18,9 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.tableCell = tableCell;
         }
 
-        public IVisualStyle<ITableCell> Style => new OpenXmlVisualStyle<OpenXmlTableCell, ITableCell>(this);
+        public IVisualStyle<ITableCell> Style => new OpenXmlVisualStyle<OpenXmlTableCell, ITableCell>(this, this);
 
-        public ITextContent<ITableCell> Text => new OpenXmlTextContent<OpenXmlTableCell, ITableCell>(this);
+        public ITextContent<ITableCell> Text => new OpenXmlTextContent<OpenXmlTableCell, ITableCell>(this, this);
 
         public OpenXmlElement GetTextBody()
         {

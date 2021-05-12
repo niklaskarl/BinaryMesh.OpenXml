@@ -25,9 +25,9 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public bool IsPlaceholder => this.shape.NonVisualShapeProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape != null;
 
-        public IVisualStyle<IShapeVisual> Style => new OpenXmlVisualStyle<OpenXmlShapeVisual, IShapeVisual>(this);
+        public IVisualStyle<IShapeVisual> Style => new OpenXmlVisualStyle<OpenXmlShapeVisual, IShapeVisual>(this, this);
 
-        public ITextContent<IShapeVisual> Text => new OpenXmlTextContent<OpenXmlShapeVisual, IShapeVisual>(this);
+        public ITextContent<IShapeVisual> Text => new OpenXmlTextContent<OpenXmlShapeVisual, IShapeVisual>(this, this);
 
         public IVisualTransform<IShapeVisual> Transform => new OpenXmlVisualTransform<OpenXmlShapeVisual, IShapeVisual>(this);
 

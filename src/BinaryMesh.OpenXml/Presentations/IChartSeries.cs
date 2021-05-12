@@ -13,5 +13,7 @@ namespace BinaryMesh.OpenXml.Presentations
         IChartSeries SetValueAxis(IRange range);
 
         IChartSeries SetFill(uint index, string srgb);
+
+        IDataLabel<IChartSeries> DataLabel { get; }
     }
 }
