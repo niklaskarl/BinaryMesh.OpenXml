@@ -89,16 +89,17 @@ namespace BinaryMesh.OpenXml.Explorer
                         .SetText(workbook.GetRange("Sheet1!$A$2"))
                         .SetCategoryAxis(workbook.GetRange("Sheet1!$B$1:$E$1"))
                         .SetValueAxis(workbook.GetRange("Sheet1!B$2:$E$2"))
-                        .SetFill(0, "00FFFF")
-                        .SetFill(1, "FFFFFF")
-                        .SetFill(2, "FFFF00")
-                        .SetFill(3, "FF0000")
                         .DataLabel.SetShowValue(true)
                         .DataLabel.SetShowSeriesName(false)
                         .DataLabel.SetShowCategoryName(false)
                         .DataLabel.SetShowLegendKey(false)
                         .DataLabel.SetShowPercent(false)
-                        .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFFFFFF));;
+                        .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFFFFFF));
+
+                    pieChart.Series.Values[0].Style.SetFill(OpenXmlColor.Rgb(0x00FFFF));
+                    pieChart.Series.Values[1].Style.SetFill(OpenXmlColor.Rgb(0xFFFFFF));
+                    pieChart.Series.Values[2].Style.SetFill(OpenXmlColor.Rgb(0xFFFF00));
+                    pieChart.Series.Values[3].Style.SetFill(OpenXmlColor.Rgb(0xFF0000));
                 }
 
                 IChartVisual barChartVisual = chartSlide.ShapeTree.AppendChartVisual("Chart 2")
@@ -150,7 +151,26 @@ namespace BinaryMesh.OpenXml.Explorer
                         .DataLabel.SetShowSeriesName(false)
                         .DataLabel.SetShowCategoryName(false)
                         .DataLabel.SetShowLegendKey(false)
+                        .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0x00000));
+
+                    barChart.Series[0].Values[0]
+                        .DataLabel.SetDelete(true);
+
+                    barChart.Series[0].Values[1]
+                        .DataLabel.Style.SetFill(OpenXmlColor.Accent4)
+                        .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFF0000));
+
+                    barChart.Series[1]
+                        .DataLabel.SetShowValue(true)
+                        .DataLabel.SetShowSeriesName(false)
+                        .DataLabel.SetShowCategoryName(false)
+                        .DataLabel.SetShowLegendKey(false)
+                        .DataLabel.Style.SetFill(OpenXmlColor.Rgb(0x000000))
                         .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFFFFFF));
+
+                    barChart.Series[0].Values[1].Style.SetFill(OpenXmlColor.Accent2);
+                    barChart.Series[1].Values[1].Style.SetFill(OpenXmlColor.Accent2);
+                    barChart.Series[2].Values[1].Style.SetFill(OpenXmlColor.Accent2);
 
                     barChartSpace.CategoryAxes[0].Text.SetFontSize(8);
                     barChartSpace.ValueAxes[0].Text.SetFontSize(8);

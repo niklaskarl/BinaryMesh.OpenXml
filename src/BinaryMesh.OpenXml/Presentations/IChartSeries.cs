@@ -1,19 +1,34 @@
 using System;
-
-using BinaryMesh.OpenXml.Spreadsheets;
+using System.Collections.Generic;
 
 namespace BinaryMesh.OpenXml.Presentations
 {
-    public interface IChartSeries
+
+    public interface IDataLabelAdjust<out TFluent>
     {
-        IChartSeries SetText(IRange range);
+        IVisualStyle<TFluent> Style { get; }
 
-        IChartSeries SetCategoryAxis(IRange range);
+        ITextStyle<TFluent> Text { get; }
 
-        IChartSeries SetValueAxis(IRange range);
+        TFluent SetDelete(bool show);
 
-        IChartSeries SetFill(uint index, string srgb);
+        TFluent Clear();
+    }
 
-        IDataLabel<IChartSeries> DataLabel { get; }
+    public interface IChartValue<out TFluent>
+    {
+        IVisualStyle<TFluent> Style { get; }
+
+        IDataLabelAdjust<TFluent> DataLabel { get; }
+    }
+
+    public interface IChartSeries<out TSeriesFluent, out TValueFluent>
+        where TValueFluent : IChartValue<TValueFluent>
+    {
+        IReadOnlyList<IChartValue<TValueFluent>> Values { get; }
+
+        IVisualStyle<TSeriesFluent> Style { get; }
+
+        IDataLabel<TSeriesFluent> DataLabel { get; }
     }
 }

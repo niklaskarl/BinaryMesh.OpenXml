@@ -52,12 +52,15 @@ namespace BinaryMesh.OpenXml.Presentations
         TFluent SetShowBubbleSize(bool show);
 
         TFluent SetShowLeaderLines(bool show);
+
+        TFluent Clear();
     }
 
-    public interface IBarChartSeries
+    public interface IBarChartSeries : IChartSeries<IBarChartSeries, IBarChartValue>
     {
-        IVisualStyle<IBarChartSeries> Style { get; }
+    }
 
-        IDataLabel<IBarChartSeries> DataLabel { get; }
+    public interface IBarChartValue : IChartValue<IBarChartValue>
+    {
     }
 }

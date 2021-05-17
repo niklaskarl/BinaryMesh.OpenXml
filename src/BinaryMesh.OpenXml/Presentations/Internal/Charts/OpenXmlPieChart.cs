@@ -11,7 +11,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         {
             this.doughnutChart = doughnutChart;
         }
-        public IChartSeries Series => new OpenXmlChartSeries(this.doughnutChart.GetFirstChild<PieChartSeries>());
+        public IPieChartSeries Series => new OpenXmlPieChartSeries(this.doughnutChart.GetFirstChild<PieChartSeries>());
 
         public IPieChart SetFirstSliceAngle(double rad)
         {

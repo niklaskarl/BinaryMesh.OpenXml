@@ -17,7 +17,7 @@ namespace BinaryMesh.OpenXml
         {
             return new RgbColorModelHex()
             {
-                Val = $"{this.code:X}"
+                Val = $"{this.code:X6}"
             };
         }
     }

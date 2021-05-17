@@ -125,5 +125,10 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
             return this.result;
         }
+
+        public TFluent Clear()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,154 +1,48 @@
 using System;
+using System.Collections.Generic;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing.Charts;
-using Drawing = DocumentFormat.OpenXml.Drawing;
 
-using BinaryMesh.OpenXml.Spreadsheets;
+using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
 using System.Linq;
+using BinaryMesh.OpenXml.Helpers;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal sealed class OpenXmlChartSeries : IChartSeries, IOpenXmlDataLabelElement
+    internal abstract class OpenXmlChartSeries<TSeriesFluent, TValueFluent> : IChartSeries<TSeriesFluent, TValueFluent>, IOpenXmlDataLabelElement, IOpenXmlShapeElement
+        where TValueFluent : IChartValue<TValueFluent>
     {
-        private readonly OpenXmlElement series;
+        protected readonly OpenXmlElement series;
 
         public OpenXmlChartSeries(OpenXmlElement series)
         {
             this.series = series;
         }
 
-        public IDataLabel<IChartSeries> DataLabel => new OpenXmlDataLabel<OpenXmlChartSeries, IChartSeries>(this, this);
+        protected abstract TSeriesFluent Result { get; }
 
-        public IChartSeries SetText(IRange range)
-        {
-            StringCache stringCache = new StringCache();
-            if (range.Width == 1 && range.Height > 0)
-            {
-                stringCache.PointCount = new PointCount() { Val = (uint)range.Height.Value };
-                for (uint i = 0; i < range.Height; ++i)
-                {
-                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[0, i].InnerValue) });
-                }
-            }
-            else if (range.Height == 1 && range.Width > 0)
-            {
-                stringCache.PointCount = new PointCount() { Val = (uint)range.Width.Value };
-                for (uint i = 0; i < range.Width; ++i)
-                {
-                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].InnerValue) });
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Expected an one-dimensional range.");
-            }
+        internal OpenXmlElement Element => this.series;
 
-            SeriesText seriesText = series.GetFirstChild<SeriesText>() ?? series.AppendChild(new SeriesText());
-            seriesText.StringReference = new StringReference()
-            {
-                Formula = new Formula(range.Formula),
-                StringCache = stringCache
-            };
-
-            return this;
-        }
-
-        public IChartSeries SetCategoryAxis(IRange range)
-        {
-            StringCache stringCache = new StringCache();
-            if (range.Width == 1 && range.Height > 0)
-            {
-                stringCache.PointCount = new PointCount() { Val = (uint)range.Height.Value };
-                for (uint i = 0; i < range.Height; ++i)
-                {
-                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[0, i].InnerValue) });
-                }
-            }
-            else if (range.Height == 1 && range.Width > 0)
-            {
-                stringCache.PointCount = new PointCount() { Val = (uint)range.Width.Value };
-                for (uint i = 0; i < range.Width; ++i)
-                {
-                    stringCache.AppendChild(new StringPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].InnerValue) });
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Expected an one-dimensional range.");
-            }
-
-            CategoryAxisData categoryAxisData = series.GetFirstChild<CategoryAxisData>() ?? series.AppendChild(new CategoryAxisData());
-            categoryAxisData.StringReference = new StringReference()
-            {
-                Formula = new Formula(range.Formula),
-                StringCache = stringCache
-            };
-
-            return this;
-        }
-
-        public IChartSeries SetValueAxis(IRange range)
-        {
-            NumberingCache numberingCache = new NumberingCache();
-            if (range.Width == 1 && range.Height > 0)
-            {
-                numberingCache.PointCount = new PointCount() { Val = (uint)range.Height.Value };
-                for (uint i = 0; i < range.Height; ++i)
-                {
-                    numberingCache.AppendChild(new NumericPoint() { Index = i, NumericValue = new NumericValue(range[0, i].InnerValue) });
-                }
-            }
-            else if (range.Height == 1 && range.Width > 0)
-            {
-                numberingCache.PointCount = new PointCount() { Val = (uint)range.Width.Value };
-                for (uint i = 0; i < range.Width; ++i)
-                {
-                    numberingCache.AppendChild(new NumericPoint() { Index = i, NumericValue = new NumericValue(range[i, 0].InnerValue) });
-                }
-            }
-            else
-            {
-                throw new ArgumentException("Expected an one-dimensional range.");
-            }
-
-            Values values = series.GetFirstChild<Values>() ?? series.AppendChild(new Values());
-            values.NumberReference = new NumberReference()
-            {
-                Formula = new Formula(range.Formula),
-                NumberingCache = numberingCache
-            };
-
-            return this;
-        }
-
-        public IChartSeries SetFill(uint index, string srgb)
-        {
-            DataPoint dataPoint = this.GetOrCreateDataPoint(index);
-            this.RemoveFill(dataPoint);
-
-            dataPoint.ChartShapeProperties.AppendChild(
-                new Drawing.SolidFill() { RgbColorModelHex = new Drawing.RgbColorModelHex() { Val = srgb } }
+        public IReadOnlyList<IChartValue<TValueFluent>> Values =>
+            new EnumerableList<NumericPoint, IChartValue<TValueFluent>>(
+                this.series.GetFirstChild<Values>()?.NumberReference?.NumberingCache?.Elements<NumericPoint>() ?? Enumerable.Empty<NumericPoint>(),
+                p => this.ConstructValue(p.Index)
             );
 
-            return this;
+        public IVisualStyle<TSeriesFluent> Style => new OpenXmlVisualStyle<OpenXmlChartSeries<TSeriesFluent, TValueFluent>, TSeriesFluent>(this, this.Result);
+
+        public IDataLabel<TSeriesFluent> DataLabel => new OpenXmlDataLabel<OpenXmlChartSeries<TSeriesFluent, TValueFluent>, TSeriesFluent>(this, this.Result);
+
+        protected abstract IChartValue<TValueFluent> ConstructValue(uint index);
+
+        public OpenXmlElement GetShapeProperties()
+        {
+            return this.series.GetFirstChild<ChartShapeProperties>();
         }
 
-        private DataPoint GetOrCreateDataPoint(uint index)
+        public OpenXmlElement GetOrCreateShapeProperties()
         {
-            DataPoint dataPoint = this.series.Elements<DataPoint>().FirstOrDefault(dp => dp.Index?.Val == index);
-            if (dataPoint == null)
-            {
-                dataPoint = this.series.AppendChild(
-                    new DataPoint()
-                    {
-                        Index = new Index() { Val = index },
-                        Bubble3D = new Bubble3D() { Val = false },
-                        ChartShapeProperties = new ChartShapeProperties()
-                    }
-                );
-            }
-
-            return dataPoint;
+            return this.series.GetFirstChild<ChartShapeProperties>() ?? this.series.AppendChild(new ChartShapeProperties());
         }
 
         public OpenXmlElement GetDataLabel()
@@ -158,17 +52,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public OpenXmlElement GetOrCreateDataLabel()
         {
-            return this.series.GetFirstChild<DataLabels>() ?? this.series.AppendChild(new DataLabels());
-        }
-
-        private void RemoveFill(DataPoint dataPoint)
-        {
-            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.NoFill>();
-            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.SolidFill>();
-            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.GradientFill>();
-            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.BlipFill>();
-            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.PatternFill>();
-            dataPoint.ChartShapeProperties.RemoveAllChildren<Drawing.GroupFill>();
+            return this.series.GetFirstChild<DataLabels>() ?? series.AppendChild(new DataLabels());
         }
     }
 }

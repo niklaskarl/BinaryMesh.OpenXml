@@ -1,4 +1,5 @@
 using System;
+using BinaryMesh.OpenXml.Spreadsheets;
 
 namespace BinaryMesh.OpenXml.Presentations
 {
@@ -10,6 +11,19 @@ namespace BinaryMesh.OpenXml.Presentations
 
         IPieChart SetHoleSize(double percent);
 
-        IChartSeries Series { get; }
+        IPieChartSeries Series { get; }
+    }
+
+    public interface IPieChartSeries : IChartSeries<IPieChartSeries, IPieChartValue>
+    {
+        IPieChartSeries SetText(IRange range);
+
+        IPieChartSeries SetCategoryAxis(IRange range);
+
+        IPieChartSeries SetValueAxis(IRange range);
+    }
+
+    public interface IPieChartValue : IChartValue<IPieChartValue>
+    {
     }
 }
