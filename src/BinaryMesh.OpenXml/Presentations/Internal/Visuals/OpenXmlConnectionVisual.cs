@@ -3,7 +3,9 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
 using Drawing = DocumentFormat.OpenXml.Drawing;
 
-using BinaryMesh.OpenXml.Presentations.Internal.Mixins;
+using BinaryMesh.OpenXml.Styles;
+using BinaryMesh.OpenXml.Styles.Internal;
+using BinaryMesh.OpenXml.Styles.Internal.Mixins;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
@@ -25,7 +27,7 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         public bool IsPlaceholder => this.connectionShape.NonVisualConnectionShapeProperties?.ApplicationNonVisualDrawingProperties?.PlaceholderShape != null;
 
-        public IVisualStyle<IConnectionVisual> Style => new OpenXmlVisualStyle<OpenXmlConnectionVisual, IConnectionVisual>(this, this);
+        public IStrokeStyle<IConnectionVisual> Style => new OpenXmlVisualStyle<OpenXmlConnectionVisual, IConnectionVisual>(this, this);
 
         public IVisualTransform<IConnectionVisual> Transform => new OpenXmlVisualTransform<OpenXmlConnectionVisual, IConnectionVisual>(this);
 

@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using DocumentFormat.OpenXml.Drawing;
 
+using BinaryMesh.OpenXml.Charts;
 using BinaryMesh.OpenXml.Presentations;
 using BinaryMesh.OpenXml.Spreadsheets;
-using DocumentFormat.OpenXml.Drawing;
 
 namespace BinaryMesh.OpenXml.Explorer
 {
@@ -151,6 +152,7 @@ namespace BinaryMesh.OpenXml.Explorer
                         .DataLabel.SetShowSeriesName(false)
                         .DataLabel.SetShowCategoryName(false)
                         .DataLabel.SetShowLegendKey(false)
+                        .DataLabel.Style.SetFill(OpenXmlColor.Rgb(0x000000).WithAlpha(0.3))
                         .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0x00000));
 
                     barChart.Series[0].Values[0]
@@ -165,15 +167,21 @@ namespace BinaryMesh.OpenXml.Explorer
                         .DataLabel.SetShowSeriesName(false)
                         .DataLabel.SetShowCategoryName(false)
                         .DataLabel.SetShowLegendKey(false)
-                        .DataLabel.Style.SetFill(OpenXmlColor.Rgb(0x000000))
+                        .DataLabel.Style.SetFill(OpenXmlColor.Accent6.WithLuminanceModulation(0.75))
                         .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFFFFFF));
 
                     barChart.Series[0].Values[1].Style.SetFill(OpenXmlColor.Accent2);
                     barChart.Series[1].Values[1].Style.SetFill(OpenXmlColor.Accent2);
                     barChart.Series[2].Values[1].Style.SetFill(OpenXmlColor.Accent2);
 
-                    barChartSpace.CategoryAxes[0].Text.SetFontSize(8);
-                    barChartSpace.ValueAxes[0].Text.SetFontSize(8);
+                    barChartSpace.CategoryAxes[0]
+                        .Text.SetFontSize(8)
+                        .MajorGridlines.Style.SetStroke(OpenXmlColor.Accent3)
+                        .MajorGridlines.Style.SetStrokeWidth(2);
+
+                    barChartSpace.ValueAxes[0]
+                        .Text.SetFontSize(8)
+                        .MajorGridlines.Remove();
                 }
 
                 chartSlide.ShapeTree.AppendShapeVisual("Shape 8")
@@ -184,8 +192,9 @@ namespace BinaryMesh.OpenXml.Explorer
                     .Text.SetTextAlign(TextAlignmentTypeValues.Center)
                     .Text.SetTextAnchor(TextAnchoringTypeValues.Center)
                     .Text.SetIsBold(true)
-                    .Style.SetFill(OpenXmlColor.Accent4)
+                    .Style.SetFill(OpenXmlColor.Accent6.WithLuminanceModulation(0.75))
                     .Style.SetStroke(OpenXmlColor.Rgb(0, 0, 255))
+                    .Style.SetStrokeWidth(0.5)
                     .Style.SetPresetGeometry(OpenXmlPresetGeometry.BuildChevron(28868));
 
                 ISlide tableSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);

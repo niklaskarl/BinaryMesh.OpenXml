@@ -1,5 +1,7 @@
 using System;
-using System.Collections.Generic;
+
+using BinaryMesh.OpenXml.Charts;
+using BinaryMesh.OpenXml.Styles;
 
 namespace BinaryMesh.OpenXml.Presentations
 {

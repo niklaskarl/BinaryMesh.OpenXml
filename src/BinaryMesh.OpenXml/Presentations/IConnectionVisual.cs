@@ -1,11 +1,13 @@
 using System;
 
+using BinaryMesh.OpenXml.Styles;
+
 namespace BinaryMesh.OpenXml.Presentations
 {
     public interface IConnectionVisual : IVisual
     {
         new IVisualTransform<IConnectionVisual> Transform { get; }
 
-        IVisualStyle<IConnectionVisual> Style { get; }
+        IStrokeStyle<IConnectionVisual> Style { get; }
     }
 }

@@ -3,6 +3,8 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Presentation;
 using Drawing = DocumentFormat.OpenXml.Drawing;
 
+using BinaryMesh.OpenXml.Styles;
+
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
     internal abstract class OpenXmlGraphicFrameVisual<TSelf> : IOpenXmlVisual, IVisualTransform<IVisual>, IVisual where TSelf : IVisual

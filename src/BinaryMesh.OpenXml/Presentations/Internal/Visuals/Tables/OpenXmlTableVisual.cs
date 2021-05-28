@@ -5,6 +5,10 @@ using DocumentFormat.OpenXml.Presentation;
 using Drawing = DocumentFormat.OpenXml.Drawing;
 
 using BinaryMesh.OpenXml.Helpers;
+using BinaryMesh.OpenXml.Styles;
+using BinaryMesh.OpenXml.Styles.Internal;
+using BinaryMesh.OpenXml.Styles.Internal.Mixins;
+using BinaryMesh.OpenXml.Tables;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {

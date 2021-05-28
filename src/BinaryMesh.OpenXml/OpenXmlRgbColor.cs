@@ -11,14 +11,30 @@ namespace BinaryMesh.OpenXml
         internal OpenXmlRgbColor(uint code)
         {
             this.code = code;
+            this.alpha = 1.0;
         }
-        
+
+        internal OpenXmlRgbColor(OpenXmlRgbColor other)
+            : base (other)
+        {
+            this.code = other.code;
+        }
+
         internal override OpenXmlElement CreateColorElement()
         {
-            return new RgbColorModelHex()
+            RgbColorModelHex element = new RgbColorModelHex()
             {
                 Val = $"{this.code:X6}"
             };
+
+            this.AnnotateOpenXmlElement(element);
+            
+            return element;
+        }
+
+        internal override OpenXmlColor Clone()
+        {
+            return new OpenXmlRgbColor(this);
         }
     }
 }

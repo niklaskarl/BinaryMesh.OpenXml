@@ -4,12 +4,13 @@ using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 using Drawing = DocumentFormat.OpenXml.Drawing;
-using Charts = DocumentFormat.OpenXml.Drawing.Charts;
 
 using BinaryMesh.OpenXml.Helpers;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
+    using Charts = DocumentFormat.OpenXml.Drawing.Charts;
+
     internal sealed class OpenXmlShapeTree : IShapeTree, IVisualContainer
     {
         private readonly IOpenXmlVisualContainer container;
