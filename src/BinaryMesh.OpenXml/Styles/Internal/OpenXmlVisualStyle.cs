@@ -70,13 +70,6 @@ namespace BinaryMesh.OpenXml.Styles.Internal
         {
             OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
             Outline outline = shapeProperties.GetFirstChild<Outline>() ?? shapeProperties.AppendChild(new Outline());
-            outline.RemoveAllChildren<NoFill>();
-            outline.RemoveAllChildren<SolidFill>();
-            outline.RemoveAllChildren<GradientFill>();
-            outline.RemoveAllChildren<BlipFill>();
-            outline.RemoveAllChildren<PatternFill>();
-            outline.RemoveAllChildren<GroupFill>();
-
             outline.Width = (int)(pt * 12700);
 
             return this.result;
