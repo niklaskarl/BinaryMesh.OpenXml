@@ -34,5 +34,7 @@ namespace BinaryMesh.OpenXml.Charts
         IPieChart InsertPieChart();
 
         IBarChart InsertBarChart(CartesianAxes axes);
+
+        ILineChart InsertLineChart(CartesianAxes axes);
     }
 }

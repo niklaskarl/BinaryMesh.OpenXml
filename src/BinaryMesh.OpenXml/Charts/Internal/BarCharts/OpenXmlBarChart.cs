@@ -9,14 +9,19 @@ using BinaryMesh.OpenXml.Spreadsheets.Helpers;
 
 namespace BinaryMesh.OpenXml.Charts.Internal
 {
-    internal sealed class OpenXmlBarChart : IBarChart, IChart
+    internal sealed class OpenXmlBarChart : IOpenXmlChart, IBarChart, IChart
     {
+        private readonly OpenXmlChartSpace chartSpace;
+
         private readonly BarChart barChart;
 
-        public OpenXmlBarChart(BarChart barChart)
+        public OpenXmlBarChart(OpenXmlChartSpace chartSpace, BarChart barChart)
         {
+            this.chartSpace = chartSpace;
             this.barChart = barChart;
         }
+
+        public uint SeriesCount => (uint)this.Series.Count;
 
         public IReadOnlyList<IBarChartSeries> Series => new EnumerableList<BarChartSeries, IBarChartSeries>(
             this.barChart.Elements<BarChartSeries>(),
@@ -57,6 +62,8 @@ namespace BinaryMesh.OpenXml.Charts.Internal
 
         public IBarChart InitializeFromRange(IRange labelRange, IRange categoryRange)
         {
+            uint orderStart = (uint)this.chartSpace.Charts.TakeWhile(c => c != this).Sum(c => c.SeriesCount);
+
             this.barChart.RemoveAllChildren<BarChartSeries>();
 
             IWorksheet worksheet = labelRange.Worksheet;
@@ -67,7 +74,7 @@ namespace BinaryMesh.OpenXml.Charts.Internal
                 {
                     for (uint labelIndex = 0; labelIndex < labelRange.Height; ++labelIndex)
                     {
-                        BarChartSeries series = this.barChart.AppendChild(new BarChartSeries()  { Index = new Index() { Val = labelIndex }, Order = new Order() { Val = labelIndex } });
+                        BarChartSeries series = this.barChart.AppendChild(new BarChartSeries()  { Index = new Index() { Val = labelIndex }, Order = new Order() { Val = orderStart + labelIndex } });
                         series.AppendChild(
                             new SeriesText().AppendChildFluent(
                                 new StringReference()
@@ -124,7 +131,7 @@ namespace BinaryMesh.OpenXml.Charts.Internal
                 {
                     for (uint labelIndex = 0; labelIndex < labelRange.Width; ++labelIndex)
                     {
-                        BarChartSeries series = this.barChart.AppendChild(new BarChartSeries()  { Index = new Index() { Val = labelIndex }, Order = new Order() { Val = labelIndex } });
+                        BarChartSeries series = this.barChart.AppendChild(new BarChartSeries()  { Index = new Index() { Val = labelIndex }, Order = new Order() { Val = orderStart + labelIndex } });
                         series.AppendChild(
                             new SeriesText().AppendChildFluent(
                                 new StringReference()

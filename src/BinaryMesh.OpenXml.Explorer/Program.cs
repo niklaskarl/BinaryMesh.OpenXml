@@ -142,6 +142,9 @@ namespace BinaryMesh.OpenXml.Explorer
                     CartesianAxes axes = barChartSpace.AppendCartesianAxes();
                     axes.CategoryAxis.SetVisibility(false);
 
+                    ILineChart lineChart = barChartSpace.InsertLineChart(axes)
+                        .InitializeFromRange(sheet.GetRange("B1:D1"), sheet.GetRange("A2:A5"));
+
                     IBarChart barChart = barChartSpace.InsertBarChart(axes)
                         .SetDirection(BarChartDirection.Column)
                         .SetGrouping(BarChartGrouping.Clustered)

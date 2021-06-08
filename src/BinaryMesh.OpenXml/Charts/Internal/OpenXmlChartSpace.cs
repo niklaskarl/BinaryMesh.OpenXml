@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Packaging;
 using Drawing = DocumentFormat.OpenXml.Drawing;
 
+using BinaryMesh.OpenXml.Helpers;
 using BinaryMesh.OpenXml.Spreadsheets;
 using BinaryMesh.OpenXml.Spreadsheets.Internal;
-using System.Collections.Generic;
+
 
 namespace BinaryMesh.OpenXml.Charts.Internal
 {
@@ -20,6 +23,17 @@ namespace BinaryMesh.OpenXml.Charts.Internal
         }
 
         public ChartPart ChartPart => this.chartPart;
+
+        public IReadOnlyList<IOpenXmlChart> Charts =>
+            new EnumerableList<IOpenXmlChart, IOpenXmlChart>(
+                this.chartPart.ChartSpace
+                    ?.GetFirstChild<Chart>()
+                    ?.GetFirstChild<PlotArea>()
+                    ?.Elements()
+                    ?.Select(e => this.ChartFromOpenXmlElement(e))
+                    ?.Where(c => c != null),
+                c => c
+            );
 
         public IReadOnlyList<IChartAxis> CategoryAxes
         {
@@ -87,6 +101,7 @@ namespace BinaryMesh.OpenXml.Charts.Internal
             PlotArea plotArea = chart.PlotArea ?? (chart.PlotArea = new PlotArea());
 
             return new OpenXmlPieChart(
+                this,
                 plotArea.AppendChild(
                     new DoughnutChart()
                         .AppendChildFluent(new PieChartSeries() { Index = new Index() { Val = 0 } })
@@ -101,8 +116,32 @@ namespace BinaryMesh.OpenXml.Charts.Internal
             PlotArea plotArea = chart.PlotArea ?? (chart.PlotArea = new PlotArea());
 
             return new OpenXmlBarChart(
+                this,
                 plotArea.AppendChild(
                     new BarChart()
+                        .AppendChildFluent(new AxisId() { Val = axes.CategoryAxis.Id })
+                        .AppendChildFluent(new AxisId() { Val = axes.ValueAxis.Id })
+                )
+            );
+        }
+
+        public ILineChart InsertLineChart(CartesianAxes axes)
+        {
+            ChartSpace chartSpace = this.chartPart.ChartSpace;
+            Chart chart = chartSpace.GetFirstChild<Chart>() ?? chartSpace.AppendChild(new Chart());
+            PlotArea plotArea = chart.PlotArea ?? (chart.PlotArea = new PlotArea());
+
+            Marker marker = new Marker();
+            marker.SetAttribute(new DocumentFormat.OpenXml.OpenXmlAttribute("Val", marker.NamespaceUri, "1"));
+
+            return new OpenXmlLineChart(
+                this,
+                plotArea.AppendChild(
+                    new LineChart()
+                        .AppendChildFluent(new Grouping() { Val = GroupingValues.Standard })
+                        .AppendChildFluent(new VaryColors() { Val = true })
+                        .AppendChildFluent(new Marker())
+                        .AppendChildFluent(new Smooth() { Val = false })
                         .AppendChildFluent(new AxisId() { Val = axes.CategoryAxis.Id })
                         .AppendChildFluent(new AxisId() { Val = axes.ValueAxis.Id })
                 )
@@ -242,6 +281,21 @@ namespace BinaryMesh.OpenXml.Charts.Internal
             );
 
             return valueAxis;
+        }
+
+        private IOpenXmlChart ChartFromOpenXmlElement(OpenXmlElement element)
+        {
+            switch (element)
+            {
+                case DoughnutChart pieChart:
+                    return new OpenXmlPieChart(this, pieChart);
+                case LineChart lineChart:
+                    return new OpenXmlLineChart(this, lineChart);
+                case BarChart barChart:
+                    return new OpenXmlBarChart(this, barChart);
+                default:
+                    return null;
+            }
         }
     }
 }

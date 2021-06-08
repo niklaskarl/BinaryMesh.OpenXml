@@ -3,14 +3,20 @@ using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace BinaryMesh.OpenXml.Charts.Internal
 {
-    internal sealed class OpenXmlPieChart : IPieChart, IChart
+    internal sealed class OpenXmlPieChart : IOpenXmlChart, IPieChart, IChart
     {
+        private readonly OpenXmlChartSpace chartSpace;
+
         private readonly DoughnutChart doughnutChart;
 
-        public OpenXmlPieChart(DoughnutChart doughnutChart)
+        public OpenXmlPieChart(OpenXmlChartSpace chartSpace, DoughnutChart doughnutChart)
         {
+            this.chartSpace = chartSpace;
             this.doughnutChart = doughnutChart;
         }
+
+        public uint SeriesCount => 1;
+
         public IPieChartSeries Series => new OpenXmlPieChartSeries(this.doughnutChart.GetFirstChild<PieChartSeries>());
 
         public IPieChart SetFirstSliceAngle(double rad)
