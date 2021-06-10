@@ -5,6 +5,7 @@ using System.Linq;
 using DocumentFormat.OpenXml.Drawing;
 
 using BinaryMesh.OpenXml.Charts;
+using BinaryMesh.OpenXml.Charts.Wizards;
 using BinaryMesh.OpenXml.Presentations;
 using BinaryMesh.OpenXml.Spreadsheets;
 
@@ -162,8 +163,8 @@ namespace BinaryMesh.OpenXml.Explorer
                         .DataLabel.SetDelete(true);
 
                     barChart.Series[0].Values[1]
-                        .DataLabel.Style.SetFill(OpenXmlColor.Accent4)
-                        .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFF0000));
+                        .DataLabel.Text.SetFontColor(OpenXmlColor.Rgb(0xFF0000))
+                        .DataLabel.Style.SetFill(OpenXmlColor.Accent4);
 
                     barChart.Series[1]
                         .DataLabel.SetShowValue(true)
@@ -199,6 +200,36 @@ namespace BinaryMesh.OpenXml.Explorer
                     .Style.SetStroke(OpenXmlColor.Rgb(0, 0, 255))
                     .Style.SetStrokeWidth(0.5)
                     .Style.SetPresetGeometry(OpenXmlPresetGeometry.BuildChevron(28868));
+
+                ISlide burndownSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
+                IChartVisual burndownChartVisual = burndownSlide.ShapeTree.AppendChartVisual("Burndown Chart 1")
+                    .Transform.SetOffset(2032000, 719666)
+                    .Transform.SetExtents(8128000, 5418667);
+
+                IChartSpace burndownChartSpace = burndownChartVisual.ChartSpace;
+                burndownChartSpace.BuildBurndownChart(new BurndownChartData(
+                    new BurndownChartCategory(
+                        "In Akquise",
+                        new BurndownChartSeries("erfolgversprechend", 15),
+                        new BurndownChartSeries("unwahrscheinlich", 28)
+                    ),
+                    new BurndownChartCategory(
+                        "Projektphase",
+                        new BurndownChartSeries("in Arbeit", 32)
+                    ),
+                    new BurndownChartCategory(
+                        "Abgeschlossen",
+                        new BurndownChartSeries("erfolgreich", 86),
+                        new BurndownChartSeries("abgebrochen", 3)
+                    )
+                ))
+                    .ConfigureConnector(c => c.Style.SetStroke(OpenXmlColor.Text1).Style.SetStrokeWidth(0.5))
+                    .ConfigureTotal(t => t.Style.SetFill(OpenXmlColor.Accent5))
+                    .ConfigureSeries(0, 0, s => s.Style.SetFill(OpenXmlColor.Rgb(0x00FF00)).DataLabel.SetShowValue(true).DataLabel.Text.SetFontColor(OpenXmlColor.Text1).DataLabel.Style.SetFill(OpenXmlColor.Light1))
+                    .ConfigureSeries(0, 1, s => s.Style.SetFill(OpenXmlColor.Rgb(0xFFFF00)))
+                    .ConfigureSeries(1, 0, s => s.Style.SetFill(OpenXmlColor.Rgb(0x0000FF)))
+                    .ConfigureSeries(2, 0, s => s.Style.SetFill(OpenXmlColor.Rgb(0x00FF00)))
+                    .ConfigureSeries(2, 1, s => s.Style.SetFill(OpenXmlColor.Rgb(0xFF0000)));
 
                 ISlide tableSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
                 ITableVisual table = tableSlide.ShapeTree.AppendTableVisual("Table 1")

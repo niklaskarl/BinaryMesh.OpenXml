@@ -26,8 +26,8 @@ namespace BinaryMesh.OpenXml.Charts.Internal
 
         internal OpenXmlElement Element => this.series;
 
-        public IReadOnlyList<IChartValue<TValueFluent>> Values =>
-            new EnumerableList<NumericPoint, IChartValue<TValueFluent>>(
+        public IReadOnlyList<TValueFluent> Values =>
+            new EnumerableList<NumericPoint, TValueFluent>(
                 this.series.GetFirstChild<Values>()?.NumberReference?.NumberingCache?.Elements<NumericPoint>() ?? Enumerable.Empty<NumericPoint>(),
                 p => this.ConstructValue(p.Index)
             );
@@ -36,7 +36,7 @@ namespace BinaryMesh.OpenXml.Charts.Internal
 
         public IDataLabel<TSeriesFluent> DataLabel => new OpenXmlDataLabel<OpenXmlChartSeries<TSeriesFluent, TValueFluent>, TSeriesFluent>(this, this.Result);
 
-        protected abstract IChartValue<TValueFluent> ConstructValue(uint index);
+        protected abstract TValueFluent ConstructValue(uint index);
 
         public OpenXmlElement GetShapeProperties()
         {
@@ -55,7 +55,16 @@ namespace BinaryMesh.OpenXml.Charts.Internal
 
         public OpenXmlElement GetOrCreateDataLabel()
         {
-            return this.series.GetFirstChild<DataLabels>() ?? series.AppendChild(new DataLabels());
+            return this.series.GetFirstChild<DataLabels>() ?? series.AppendChild(
+                new DataLabels()
+                    .AppendChildFluent(new ShowLegendKey() { Val = false })
+                    .AppendChildFluent(new ShowValue() { Val = false })
+                    .AppendChildFluent(new ShowCategoryName() { Val = false })
+                    .AppendChildFluent(new ShowSeriesName() { Val = false })
+                    .AppendChildFluent(new ShowPercent() { Val = false })
+                    .AppendChildFluent(new ShowBubbleSize() { Val = true })
+                    .AppendChildFluent(new ShowLeaderLines() { Val = true })
+            );
         }
     }
 }

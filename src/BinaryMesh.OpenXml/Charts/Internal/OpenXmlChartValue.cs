@@ -40,7 +40,18 @@ namespace BinaryMesh.OpenXml.Charts.Internal
             DataLabel dataLabelAdjust = dataLabel.Elements<DataLabel>().Where(dl => dl.Index?.Val <= this.valueIndex).LastOrDefault();
             if (!(dataLabelAdjust?.Index?.Val?.HasValue ?? false) || dataLabelAdjust.Index.Val != this.valueIndex)
             {
-                dataLabelAdjust = dataLabel.InsertAfter(new DataLabel() { Index = new Index() { Val = this.valueIndex} }, dataLabelAdjust);
+                dataLabelAdjust = dataLabel.InsertAfter(
+                    new DataLabel() { Index = new Index() { Val = this.valueIndex }, }
+                        //    .AppendChildFluent(new Delete() { Val = false })
+                            .AppendChildFluent(new ShowLegendKey() { Val = false })
+                            .AppendChildFluent(new ShowValue() { Val = false })
+                            .AppendChildFluent(new ShowCategoryName() { Val = false })
+                            .AppendChildFluent(new ShowSeriesName() { Val = false })
+                            .AppendChildFluent(new ShowPercent() { Val = false })
+                            .AppendChildFluent(new ShowBubbleSize() { Val = true })
+                            .AppendChildFluent(new ShowLeaderLines() { Val = true }),
+                    dataLabelAdjust
+                );
             }
 
             return dataLabelAdjust;

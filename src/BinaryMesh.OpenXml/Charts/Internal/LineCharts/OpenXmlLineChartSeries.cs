@@ -12,7 +12,7 @@ namespace BinaryMesh.OpenXml.Charts.Internal
 
         protected override ILineChartSeries Result => this;
 
-        protected override IChartValue<ILineChartValue> ConstructValue(uint index)
+        protected override ILineChartValue ConstructValue(uint index)
         {
             return new OpenXmlLineChartValue(this, index);
         }

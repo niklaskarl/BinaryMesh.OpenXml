@@ -14,7 +14,7 @@ namespace BinaryMesh.OpenXml.Charts.Internal
 
         protected override IPieChartSeries Result => this;
 
-        protected override IChartValue<IPieChartValue> ConstructValue(uint index)
+        protected override IPieChartValue ConstructValue(uint index)
         {
             return new OpenXmlPieChartValue(this, index);
         }

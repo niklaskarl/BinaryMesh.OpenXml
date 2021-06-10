@@ -40,7 +40,32 @@ namespace BinaryMesh.OpenXml.Charts.Internal
             {
                 for (uint labelIndex = 0; labelIndex < labelRange.Height; ++labelIndex)
                 {
-                    LineChartSeries series = this.lineChart.AppendChild(new LineChartSeries()  { Index = new Index() { Val = labelIndex }, Order = new Order() { Val = orderStart + labelIndex } });
+                    LineChartSeries series = this.lineChart.AppendChild(
+                        new LineChartSeries()
+                        {
+                            Index = new Index() { Val = orderStart + labelIndex },
+                            Order = new Order() { Val = orderStart + labelIndex }
+                        }
+                    );
+
+                    series.AppendChild(
+                        new Marker()
+                        {
+                            Symbol = new Symbol() { Val = MarkerStyleValues.None }
+                        }
+                    );
+
+                    series.AppendChild(
+                        new SeriesText().AppendChildFluent(
+                            new StringReference()
+                            {
+                                Formula = new Formula(labelRange[0, labelIndex].Reference),
+                                StringCache = new StringCache()
+                                    .AppendChildFluent(new PointCount() { Val = 1 })
+                                    .AppendChildFluent(new StringPoint() { Index = 0, NumericValue = new NumericValue() { Text = labelRange[0, labelIndex].InnerValue } })
+                            }
+                        )
+                    );
 
                     series.AppendChild(
                         new CategoryAxisData().AppendChildFluent(
@@ -73,13 +98,40 @@ namespace BinaryMesh.OpenXml.Charts.Internal
                             }
                         )
                     );
+
+                    series.AppendChild(new Smooth() { Val = false });
                 }
             }
             else if (labelRange.Height == 1 && labelRange.Width > 0 && categoryRange.Width == 1 && categoryRange.Height > 0)
             {
                 for (uint labelIndex = 0; labelIndex < labelRange.Width; ++labelIndex)
                 {
-                    LineChartSeries series = this.lineChart.AppendChild(new LineChartSeries()  { Index = new Index() { Val = labelIndex }, Order = new Order() { Val = orderStart + labelIndex } });
+                    LineChartSeries series = this.lineChart.AppendChild(
+                        new LineChartSeries()
+                        {
+                            Index = new Index() { Val = orderStart + labelIndex },
+                            Order = new Order() { Val = orderStart + labelIndex }
+                        }
+                    );
+
+                    series.AppendChild(
+                        new Marker()
+                        {
+                            Symbol = new Symbol() { Val = MarkerStyleValues.None }
+                        }
+                    );
+
+                    series.AppendChild(
+                        new SeriesText().AppendChildFluent(
+                            new StringReference()
+                            {
+                                Formula = new Formula(labelRange[labelIndex, 0].Reference),
+                                StringCache = new StringCache()
+                                    .AppendChildFluent(new PointCount() { Val = 1 })
+                                    .AppendChildFluent(new StringPoint() { Index = 0, NumericValue = new NumericValue() { Text = labelRange[labelIndex, 0].InnerValue } })
+                            }
+                        )
+                    );
 
                     series.AppendChild(
                         new CategoryAxisData().AppendChildFluent(
@@ -112,6 +164,8 @@ namespace BinaryMesh.OpenXml.Charts.Internal
                             }
                         )
                     );
+
+                    series.AppendChild(new Smooth() { Val = false });
                 }
             }
             else

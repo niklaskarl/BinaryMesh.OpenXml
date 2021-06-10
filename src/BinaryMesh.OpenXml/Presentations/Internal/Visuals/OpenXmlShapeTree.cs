@@ -152,7 +152,13 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         {
             ChartPart chartPart = this.container.Part.AddNewPartDefaultId<ChartPart>();
             chartPart.ChartSpace = new Charts.ChartSpace() { Date1904 = new Charts.Date1904() { Val = false } }
-                .AppendChildFluent(new Charts.Chart());
+                .AppendChildFluent(
+                    new Charts.Chart()
+                    {
+                        PlotArea = new Charts.PlotArea(),
+                        DisplayBlanksAs = new Charts.DisplayBlanksAs() { Val = Charts.DisplayBlanksAsValues.Gap }
+                    }
+                );
 
             Charts.Chart chart = new Charts.Chart();
                 chart.SetAttribute(new OpenXmlAttribute("r", "id", "http://schemas.openxmlformats.org/officeDocument/2006/relationships", this.container.Part.GetIdOfPart(chartPart)));
