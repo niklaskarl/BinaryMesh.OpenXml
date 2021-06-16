@@ -133,16 +133,20 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
                     offset -= category.Series.Sum(s => s.Value);
                     seriesSheet.Cells[column, 1].SetValue(offset);
 
+                    uint seriesIdx = 0;
+                    uint seriesCount = (uint)category.Series.Length;
                     foreach (BurndownChartSeries series in category.Series)
                     {
                         // set name of series
-                        seriesSheet.Cells[0, seriesRow].SetValue(series.Name);
+                        seriesSheet.Cells[0, seriesRow + seriesCount - seriesIdx - 1].SetValue(series.Name);
 
                         // set value of series
-                        seriesSheet.Cells[column, seriesRow].SetValue(Math.Abs(series.Value));
+                        seriesSheet.Cells[column, seriesRow + seriesCount - seriesIdx - 1].SetValue(Math.Abs(series.Value));
 
-                        ++seriesRow;
+                        ++seriesIdx;
                     }
+
+                    seriesRow += (uint)category.Series.Length;
 
                     ++connectorRow;
                     ++column;
@@ -167,20 +171,23 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
                     data.TotalCallback(barChart.Series[1].Values[1]);
                 }
 
-                int valueIndex = 2;
-                int seriesIndex = 3;
+                int valueIndex = 1;
+                int seriesIndex = 2;
                 foreach (BurndownChartCategory category in data.Categories)
                 {
+                    int seriesIdx = 0;
                     foreach (BurndownChartSeries series in category.Series)
                     {
                         if (series.Callback != null)
                         {
-                            series.Callback(barChart.Series[seriesIndex].Values[valueIndex]);
+                            IBarChartSeries s = barChart.Series[seriesIndex + category.Series.Length - seriesIdx - 1];
+                            series.Callback(s.Values[valueIndex]);
                         }
 
-                        ++seriesIndex;
+                        ++seriesIdx;
                     }
 
+                    seriesIndex += category.Series.Length;
                     ++valueIndex;
                 }
 

@@ -210,17 +210,17 @@ namespace BinaryMesh.OpenXml.Explorer
                 burndownChartSpace.BuildBurndownChart(new BurndownChartData(
                     new BurndownChartCategory(
                         "In Akquise",
-                        new BurndownChartSeries("erfolgversprechend", 15),
-                        new BurndownChartSeries("unwahrscheinlich", 28)
+                        new BurndownChartSeries("erfolgversprechend", 15, s => s.Style.SetFill(OpenXmlColor.Accent1)),
+                        new BurndownChartSeries("unwahrscheinlich", 28, s => s.Style.SetFill(OpenXmlColor.Accent2))
                     ),
                     new BurndownChartCategory(
                         "Projektphase",
-                        new BurndownChartSeries("in Arbeit", 32)
+                        new BurndownChartSeries("in Arbeit", 32, s => s.Style.SetFill(OpenXmlColor.Accent3))
                     ),
                     new BurndownChartCategory(
                         "Abgeschlossen",
-                        new BurndownChartSeries("erfolgreich", 86),
-                        new BurndownChartSeries("abgebrochen", 3)
+                        new BurndownChartSeries("erfolgreich", 86, s => s.Style.SetFill(OpenXmlColor.Accent4)),
+                        new BurndownChartSeries("abgebrochen", 3, s => s.Style.SetFill(OpenXmlColor.Accent5))
                     )
                 ))
                     .ConfigureConnector(c => c.Style.SetStroke(OpenXmlColor.Text1).Style.SetStrokeWidth(0.5))
