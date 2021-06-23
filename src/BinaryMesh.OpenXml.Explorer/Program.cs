@@ -206,7 +206,7 @@ namespace BinaryMesh.OpenXml.Explorer
                     .Transform.SetOffset(2032000, 719666)
                     .Transform.SetExtents(8128000, 5418667);
 
-                IChartSpace burndownChartSpace = burndownChartVisual.ChartSpace;
+                /*IChartSpace burndownChartSpace = burndownChartVisual.ChartSpace;
                 burndownChartSpace.BuildBurndownChart(new BurndownChartData(
                     new BurndownChartCategory(
                         "In Akquise",
@@ -229,7 +229,28 @@ namespace BinaryMesh.OpenXml.Explorer
                     .ConfigureSeries(0, 1, s => s.Style.SetFill(OpenXmlColor.Rgb(0xFFFF00)))
                     .ConfigureSeries(1, 0, s => s.Style.SetFill(OpenXmlColor.Rgb(0x0000FF)))
                     .ConfigureSeries(2, 0, s => s.Style.SetFill(OpenXmlColor.Rgb(0x00FF00)))
-                    .ConfigureSeries(2, 1, s => s.Style.SetFill(OpenXmlColor.Rgb(0xFF0000)));
+                    .ConfigureSeries(2, 1, s => s.Style.SetFill(OpenXmlColor.Rgb(0xFF0000)));*/
+
+                new BurndownChartConfig()
+                    .AddCategory("In Akquise")
+                        .AddValue("erfolgsversprechend", 15)
+                            .WithStyle(s => s.Style.SetFill(OpenXmlColor.Rgb(0x00FF00)).DataLabel.SetShowValue(true).DataLabel.Text.SetFontColor(OpenXmlColor.Text1).DataLabel.Style.SetFill(OpenXmlColor.Light1))
+                        .AddValue("unwahrscheinlich", 28)
+                            .WithStyle(s => s.Style.SetFill(OpenXmlColor.Rgb(0xFFFF00)))
+                    .AddCategory("Projektphase")
+                        .AddValue("in Arbeit", 32)
+                    .AddCategory("Abgeschlossen")
+                        .WithCustomOffset(0)
+                        .AddValue("in Arbeit", 86)
+                    .AddCategory("Abgeschlossen - erfolgreich")
+                        .WithCustomOffset(0)
+                        .AddValue("in Arbeit", 56)
+                    .AddCategory("Abgeschlossen - abgebrochen")
+                        .WithCustomOffset(86)
+                        .AddValue("in Arbeit", 63)
+                    .WithConnectorStyle(c => c.Style.SetStroke(OpenXmlColor.Text1).Style.SetStrokeWidth(0.5))
+                    .WithTotalStyle(t => t.Style.SetFill(OpenXmlColor.Accent5))
+                    .Apply(burndownChartVisual.ChartSpace);
 
                 ISlide tableSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
                 ITableVisual table = tableSlide.ShapeTree.AppendTableVisual("Table 1")

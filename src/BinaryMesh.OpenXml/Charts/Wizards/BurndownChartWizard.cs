@@ -61,6 +61,7 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
             this.Value = value;
             this.Callback = null;
         }
+
         public BurndownChartSeries(string name, double value, Action<IChartValue<IBarChartValue>> callback)
         {
             this.Name = name;
