@@ -249,6 +249,7 @@ namespace BinaryMesh.OpenXml.Explorer
                         .WithCustomOffset(86)
                         .AddValue("in Arbeit", 63)
                     .WithConnectorStyle(c => c.Style.SetStroke(OpenXmlColor.Text1).Style.SetStrokeWidth(0.5))
+                    .WithTotal("Gesamt")
                     .WithTotalStyle(t => t.Style.SetFill(OpenXmlColor.Accent5))
                     .Apply(burndownChartVisual.ChartSpace);
 

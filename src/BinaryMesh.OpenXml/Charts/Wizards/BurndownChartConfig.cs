@@ -9,6 +9,8 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
 {
     public interface IBurndownChartConfig
     {
+        IBurndownChartConfig WithTotal(string name);
+
         IBurndownChartConfig WithTotalStyle(Action<IBarChartValue> style);
 
         IBurndownChartConfig WithConnectorStyle(Action<ILineChartValue> style);
@@ -41,6 +43,16 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
             this.target = target;
         }
 
+        public IBurndownChartConfig WithTotal(string name)
+        {
+            return this.target.WithTotal(name);
+        }
+
+        public IBurndownChartConfig WithTotalStyle(Action<IBarChartValue> style)
+        {
+            return this.target.WithTotalStyle(style);
+        }
+
         public IBurndownChartCategoryConfig AddCategory(string name)
         {
             return this.target.AddCategory(name);
@@ -49,11 +61,6 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
         public void Apply(IChartSpace chartSpace)
         {
             this.target.Apply(chartSpace);
-        }
-
-        public IBurndownChartConfig WithTotalStyle(Action<IBarChartValue> style)
-        {
-            return this.target.WithTotalStyle(style);
         }
 
         public IBurndownChartConfig WithConnectorStyle(Action<ILineChartValue> style)
@@ -66,13 +73,38 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
     {
         private readonly List<BurndownChartCategoryConfig> categories;
 
-        private Action<IBarChartValue> totalStyle;
+        private string total = null;
 
-        private Action<ILineChartValue> connectorStyle;
+        private Action<IBarChartValue> totalStyle = null;
+
+        private Action<ILineChartValue> connectorStyle = null;
 
         public BurndownChartConfig()
         {
             this.categories = new List<BurndownChartCategoryConfig>();
+        }
+
+        public IBurndownChartConfig WithTotal(string name)
+        {
+            if (name == null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            this.total = name;
+            return this;
+        }
+
+        public IBurndownChartConfig WithTotalStyle(Action<IBarChartValue> style)
+        {
+            this.totalStyle = style;
+            return this;
+        }
+
+        public IBurndownChartConfig WithConnectorStyle(Action<ILineChartValue> style)
+        {
+            this.connectorStyle = style;
+            return this;
         }
 
         public IBurndownChartCategoryConfig AddCategory(string name)
@@ -93,28 +125,39 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
                 double total = this.categories.Sum(c => c.CustomOffset.HasValue ? c.CustomOffset.Value : c.Values.Sum(s => s.Value));
 
                 seriesSheet.Cells[0, 1].SetValue("Offset");
-                seriesSheet.Cells[0, 2].SetValue("Total");
-                
-                seriesSheet.Cells[1, 0].SetValue("Total");
-                connectorSheet.Cells[1, 0].SetValue("Total");
 
-                seriesSheet.Cells[1, 1].SetValue(0);
-                seriesSheet.Cells[1, 2].SetValue(total);
+                uint column = 1;
+                uint seriesRow = 2;
+                uint connectorRow = 0;
+                if (this.total != null)
+                {
+                    // set name of total category
+                    seriesSheet.Cells[column, 0].SetValue(this.total);
+                    connectorSheet.Cells[column, 0].SetValue(this.total);
+
+                    seriesSheet.Cells[0, seriesRow].SetValue("Total");
+
+                    seriesSheet.Cells[column, 1].SetValue(0);
+                    seriesSheet.Cells[column, seriesRow].SetValue(total);
+
+                    ++seriesRow;
+                    ++column;
+                    ++connectorRow;
+                }
 
                 double offset = total;
-                uint column = 2;
-                uint seriesRow = 3;
-                uint connectorRow = 1;
                 foreach (BurndownChartCategoryConfig category in this.categories)
                 {
-
                     // set name of category
                     seriesSheet.Cells[column, 0].SetValue(category.Name);
                     connectorSheet.Cells[column, 0].SetValue(category.Name);
 
                     // set connector of category
-                    connectorSheet.Cells[column - 1, connectorRow].SetValue(offset);
-                    connectorSheet.Cells[column, connectorRow].SetValue(offset);
+                    if (column > 1)
+                    {
+                        connectorSheet.Cells[column - 1, connectorRow].SetValue(offset);
+                        connectorSheet.Cells[column, connectorRow].SetValue(offset);
+                    }
 
                     // set offset of category
                     seriesSheet.Cells[column, 1].SetValue(offset - category.Values.Sum(s => s.Value));
@@ -160,8 +203,8 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
 
                 // hide offset series
                 barChart.Series[0].Style.SetNoFill();
-                
-                if (this.totalStyle != null)
+
+                if (this.total != null && this.totalStyle != null)
                 {
                     this.totalStyle(barChart.Series[1].Values[1]);
                 }
@@ -174,8 +217,14 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
                     }
                 }
 
-                int valueIndex = 1;
-                int seriesIndex = 2;
+                int valueIndex = 0;
+                int seriesIndex = 1;
+                if (this.total != null)
+                {
+                    ++valueIndex;
+                    ++seriesIndex;
+                }
+
                 foreach (BurndownChartCategoryConfig category in this.categories)
                 {
                     int seriesIdx = 0;
@@ -202,18 +251,6 @@ namespace BinaryMesh.OpenXml.Charts.Wizards
                     .SetVisibility(false)
                     .MajorGridlines.Remove();
             }
-        }
-
-        public IBurndownChartConfig WithConnectorStyle(Action<ILineChartValue> style)
-        {
-            this.connectorStyle = style;
-            return this;
-        }
-
-        public IBurndownChartConfig WithTotalStyle(Action<IBarChartValue> style)
-        {
-            this.totalStyle = style;
-            return this;
         }
 
         private sealed class BurndownChartCategoryConfig : BurndownChartConfigProxy, IBurndownChartCategoryConfig
