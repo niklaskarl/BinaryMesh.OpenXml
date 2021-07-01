@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
+using BinaryMesh.OpenXml.Tables;
+
 namespace BinaryMesh.OpenXml.Presentations
 {
     public interface IPresentation : IDisposable
@@ -10,6 +12,8 @@ namespace BinaryMesh.OpenXml.Presentations
         IReadOnlyList<ISlideMaster> SlideMasters { get; }
 
         IReadOnlyList<ISlide> Slides { get; }
+
+        ITableStyleCollection TableStyles { get; }
 
         ISlide InsertSlide(ISlideLayout layout);
 

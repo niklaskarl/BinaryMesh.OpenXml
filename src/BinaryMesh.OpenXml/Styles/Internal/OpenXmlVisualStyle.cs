@@ -75,6 +75,33 @@ namespace BinaryMesh.OpenXml.Styles.Internal
             return this.result;
         }
 
+        public TFluent RemoveStrokeDash()
+        {
+            OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
+            Outline outline = shapeProperties.GetFirstChild<Outline>() ?? shapeProperties.AppendChild(new Outline() { Width = 12700 });
+
+            outline.RemoveAllChildren<PresetDash>();
+            outline.RemoveAllChildren<CustomDash>();
+
+            return this.result;
+        }
+
+        public TFluent SetStrokeDash(PresetLineDashValues value)
+        {
+            OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
+            Outline outline = shapeProperties.GetFirstChild<Outline>() ?? shapeProperties.AppendChild(new Outline() { Width = 12700 });
+
+            outline.RemoveAllChildren<PresetDash>();
+            outline.RemoveAllChildren<CustomDash>();
+
+            outline.AppendChild(new PresetDash()
+            {
+                Val = value
+            });
+
+            return this.result;
+        }
+
         public TFluent SetPresetGeometry(OpenXmlPresetGeometry geometry)
         {
             OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();

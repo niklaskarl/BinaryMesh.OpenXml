@@ -5,7 +5,32 @@ using System.Linq;
 
 namespace BinaryMesh.OpenXml.Helpers
 {
-    internal sealed class EnumerableList<TEnum, TSelect> : IReadOnlyList<TSelect>, IReadOnlyCollection<TSelect>, IEnumerable<TSelect>, IEnumerable
+    internal abstract class BaseEnumerableList<TEnum, TSelect> : IReadOnlyList<TSelect>, IReadOnlyCollection<TSelect>, IEnumerable<TSelect>, IEnumerable
+    {
+        public BaseEnumerableList()
+        {
+        }
+
+        protected abstract IEnumerable<TEnum> Enumerable { get; }
+
+        protected abstract Func<TEnum, TSelect> Selector { get; }
+
+        public TSelect this[int index] => this.Selector(this.Enumerable.Skip(index).First());
+
+        public int Count => this.Enumerable.Count();
+
+        public IEnumerator<TSelect> GetEnumerator()
+        {
+            return Enumerable.Select(Selector).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+    }
+
+    internal sealed class EnumerableList<TEnum, TSelect> : BaseEnumerableList<TEnum, TSelect>
     {
         private readonly IEnumerable<TEnum> enumerable;
 
@@ -17,18 +42,8 @@ namespace BinaryMesh.OpenXml.Helpers
             this.selector = selector;
         }
 
-        public TSelect this[int index] => this.selector(this.enumerable.Skip(index).First());
+        protected override IEnumerable<TEnum> Enumerable => this.enumerable;
 
-        public int Count => this.enumerable.Count();
-
-        public IEnumerator<TSelect> GetEnumerator()
-        {
-            return enumerable.Select(selector).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
-        }
+        protected override Func<TEnum, TSelect> Selector => this.selector;
     }
 }

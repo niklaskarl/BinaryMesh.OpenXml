@@ -35,6 +35,14 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         protected override ITableVisual Self => this;
 
+        public ITableVisual SetStyle(ITableStyle style)
+        {
+            string id = style.Id;
+            this.GetTableStyleId(true).Text = id;
+
+            return this;
+        }
+
         public ITableColumn AppendColumn(long width)
         {
             Drawing.GridColumn gridColumn = this.table.GetFirstChild<Drawing.TableGrid>().AppendChild(
@@ -89,6 +97,30 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             }
 
             return new TableRow(this, tableRow);
+        }
+
+        private Drawing.TableProperties GetTableProperties(bool create)
+        {
+            Drawing.TableProperties result = this.table.TableProperties;
+            if (result == null && create)
+            {
+                result = new Drawing.TableProperties();
+                this.table.TableProperties = result;
+            }
+
+            return result;
+        }
+
+        private Drawing.TableStyleId GetTableStyleId(bool create)
+        {
+            Drawing.TableProperties tableProperties = GetTableProperties(create);
+            Drawing.TableStyleId result = tableProperties.GetFirstChild<Drawing.TableStyleId>();
+            if (result == null && create)
+            {
+                result = tableProperties.AppendChild(new Drawing.TableStyleId());
+            }
+
+            return result;
         }
 
         private sealed class TableColumn : ITableColumn

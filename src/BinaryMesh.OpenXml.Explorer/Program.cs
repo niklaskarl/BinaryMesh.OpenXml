@@ -8,6 +8,7 @@ using BinaryMesh.OpenXml.Charts;
 using BinaryMesh.OpenXml.Charts.Wizards;
 using BinaryMesh.OpenXml.Presentations;
 using BinaryMesh.OpenXml.Spreadsheets;
+using BinaryMesh.OpenXml.Tables;
 
 namespace BinaryMesh.OpenXml.Explorer
 {
@@ -199,6 +200,7 @@ namespace BinaryMesh.OpenXml.Explorer
                     .Style.SetFill(OpenXmlColor.Accent6.WithLuminanceModulation(0.75))
                     .Style.SetStroke(OpenXmlColor.Rgb(0, 0, 255))
                     .Style.SetStrokeWidth(0.5)
+                    .Style.SetStrokeDash(PresetLineDashValues.LargeDash)
                     .Style.SetPresetGeometry(OpenXmlPresetGeometry.BuildChevron(28868));
 
                 ISlide burndownSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
@@ -254,18 +256,22 @@ namespace BinaryMesh.OpenXml.Explorer
                     .Apply(burndownChartVisual.ChartSpace);
 
                 ISlide tableSlide = presentation.InsertSlide(presentation.SlideMasters[0].SlideLayouts[6]);
+
+                ITableStyle tableStyle = CreateTableStyle(presentation);
+
                 ITableVisual table = tableSlide.ShapeTree.AppendTableVisual("Table 1")
-                    .Transform.SetOffset(OpenXmlUnit.Cm(5), OpenXmlUnit.Cm(5));
+                    .Transform.SetOffset(OpenXmlUnit.Cm(5), OpenXmlUnit.Cm(5))
+                    .SetStyle(tableStyle);
 
                 table.AppendColumn(OpenXmlUnit.Cm(5));
                 table.AppendColumn(OpenXmlUnit.Cm(5));
                 table.AppendRow(OpenXmlUnit.Cm(0));
                 table.AppendRow(OpenXmlUnit.Cm(0));
 
-                table.Cells[0, 0].Text.SetText("Hello").Text.SetFontSize(8).Text.SetFont("Arial");
-                table.Cells[1, 0].Text.SetText("World").Text.SetIsBold(true).Text.SetFont("Comic Sans MS");
-                table.Cells[0, 1].Text.SetText("ABC").Text.SetFontColor(OpenXmlColor.Accent2);
-                table.Cells[1, 1].Text.SetText("123").Text.SetFontColor(OpenXmlColor.Rgb(25, 240, 120));
+                table.Cells[0, 0].Text.SetText("Hello")/*.Text.SetFontSize(8).Text.SetFont("Arial")*/;
+                table.Cells[1, 0].Text.SetText("World")/*.Text.SetIsBold(true).Text.SetFont("Comic Sans MS")*/;
+                table.Cells[0, 1].Text.SetText("ABC")/*.Text.SetFontColor(OpenXmlColor.Accent2)*/;
+                table.Cells[1, 1].Text.SetText("123")/*.Text.SetFontColor(OpenXmlColor.Rgb(25, 240, 120))*/;
 
                 using (Stream stream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite))
                 {
@@ -280,6 +286,63 @@ namespace BinaryMesh.OpenXml.Explorer
                     UseShellExecute = true
                 }
             }.Start();
+        }
+
+        private static ITableStyle CreateTableStyle(IPresentation presentation)
+        {
+            ITableStyle tableStyle = presentation.TableStyles.AddTableStyle("Custom Style");
+            tableStyle.WholeTablePart
+                .Text.SetFont(new OpenXmlFontRef(OpenXmlFontCollectionIndex.Minor, new OpenXmlPresetColor(PresetColorValues.Black)))
+                .Text.SetFontColor(OpenXmlColor.Dark1)
+                .Style.Border.Left.SetStrokeWidth(1)
+                .Style.Border.Left.SetStroke(OpenXmlColor.Light1)
+                .Style.Border.Right.SetStrokeWidth(1)
+                .Style.Border.Right.SetStroke(OpenXmlColor.Light1)
+                .Style.Border.Top.SetStrokeWidth(1)
+                .Style.Border.Top.SetStroke(OpenXmlColor.Light1)
+                .Style.Border.Bottom.SetStrokeWidth(1)
+                .Style.Border.Bottom.SetStroke(OpenXmlColor.Light1)
+                .Style.Border.InsideHorizontal.SetStrokeWidth(1)
+                .Style.Border.InsideHorizontal.SetStroke(OpenXmlColor.Light1)
+                .Style.Border.InsideVertical.SetStrokeWidth(1)
+                .Style.Border.InsideVertical.SetStroke(OpenXmlColor.Light1)
+                .Style.Fill.SetFill(OpenXmlColor.Accent1.WithTint(0.2));
+
+            tableStyle.Row
+                .Style.Fill.SetFill(OpenXmlColor.Accent1.WithTint(0.4));
+
+            tableStyle.Column
+                .Style.Fill.SetFill(OpenXmlColor.Accent1.WithTint(0.4));
+
+            tableStyle.LastColumn
+                .Text.SetIsBold(true)
+                .Text.SetFont(new OpenXmlFontRef(OpenXmlFontCollectionIndex.Minor, new OpenXmlPresetColor(PresetColorValues.Black)))
+                .Text.SetFontColor(OpenXmlColor.Light1)
+                .Style.Fill.SetFill(OpenXmlColor.Accent1);
+
+            tableStyle.FirstColumn
+                .Text.SetIsBold(true)
+                .Text.SetFont(new OpenXmlFontRef(OpenXmlFontCollectionIndex.Minor, new OpenXmlPresetColor(PresetColorValues.Black)))
+                .Text.SetFontColor(OpenXmlColor.Light1)
+                .Style.Fill.SetFill(OpenXmlColor.Accent1);
+
+            tableStyle.LastRow
+                .Text.SetIsBold(true)
+                .Text.SetFont(new OpenXmlFontRef(OpenXmlFontCollectionIndex.Minor, new OpenXmlPresetColor(PresetColorValues.Black)))
+                .Text.SetFontColor(OpenXmlColor.Light1)
+                .Style.Border.Top.SetStrokeWidth(3)
+                .Style.Border.Top.SetStroke(OpenXmlColor.Light1)
+                .Style.Fill.SetFill(OpenXmlColor.Accent1);
+
+            tableStyle.FirstRow
+                .Text.SetIsBold(true)
+                .Text.SetFont(new OpenXmlFontRef(OpenXmlFontCollectionIndex.Minor, new OpenXmlPresetColor(PresetColorValues.Black)))
+                .Text.SetFontColor(OpenXmlColor.Light1)
+                .Style.Border.Bottom.SetStrokeWidth(3)
+                .Style.Border.Bottom.SetStroke(OpenXmlColor.Light1)
+                .Style.Fill.SetFill(OpenXmlColor.Accent1);
+
+            return tableStyle;
         }
 
         private static void GenerateSpreadsheet(string[] args)

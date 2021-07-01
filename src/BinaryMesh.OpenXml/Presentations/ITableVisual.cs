@@ -16,6 +16,8 @@ namespace BinaryMesh.OpenXml.Presentations
 
         IReadOnlyList<ITableRow> Rows { get; }
 
+        ITableVisual SetStyle(ITableStyle style);
+
         ITableColumn AppendColumn(long width);
 
         ITableRow AppendRow(long height);

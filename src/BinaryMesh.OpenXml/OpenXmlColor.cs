@@ -10,12 +10,15 @@ namespace BinaryMesh.OpenXml
 
         protected double luminanceOffset;
 
+        protected double tint;
+
         protected double alpha;
 
         internal OpenXmlColor()
         {
             this.luminanceModulation = 1.0;
             this.luminanceOffset = 0.0;
+            this.tint = 0.0;
             this.alpha = 1.0;
         }
 
@@ -24,9 +27,11 @@ namespace BinaryMesh.OpenXml
             this.alpha = other.alpha;
         }
 
-        public double LuminanceModulation => luminanceModulation;
+        public double LuminanceModulation => this.luminanceModulation;
 
-        public double LuminanceOffset => luminanceOffset;
+        public double LuminanceOffset => this.luminanceOffset;
+
+        public double Tint => this.tint;
 
         public double Alpha => this.alpha;
 
@@ -84,6 +89,14 @@ namespace BinaryMesh.OpenXml
             return color;
         }
 
+        public OpenXmlColor WithTint(double tint)
+        {
+            OpenXmlColor color = this.Clone();
+            color.tint = tint;
+
+            return color;
+        }
+
         public OpenXmlColor WithAlpha(double alpha)
         {
             OpenXmlColor color = this.Clone();
@@ -102,6 +115,11 @@ namespace BinaryMesh.OpenXml
             if (luminanceOffset != 0.0)
             {
                 element.AppendChild(new LuminanceOffset() { Val = (int)(luminanceOffset * 100000) });
+            }
+
+            if (tint != 0.0)
+            {
+                element.AppendChild(new Tint() { Val = (int)(tint * 100000) });
             }
 
             if (alpha != 1.0)

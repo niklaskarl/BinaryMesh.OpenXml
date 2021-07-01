@@ -22,11 +22,21 @@ namespace BinaryMesh.OpenXml
             this.adjustValues = adjustValues;
         }
 
-        public static OpenXmlPresetGeometry BuildChevron(OpenXmlUnit adjust)
+        public static OpenXmlPresetGeometry BuildChevron(long adjust = 28868L)
         {
             ImmutableArray<AdjustValue>.Builder adjustValues = ImmutableArray.CreateBuilder<AdjustValue>();
 
             return new OpenXmlPresetGeometry(ShapeTypeValues.Chevron, ImmutableArray.Create<AdjustValue>(new AdjustValue("adj", $"val {(long)adjust}")));
+        }
+
+        public static OpenXmlPresetGeometry BuildWave(long adjust1 = 10623L, long adjust2 = -475L)
+        {
+            ImmutableArray<AdjustValue>.Builder adjustValues = ImmutableArray.CreateBuilder<AdjustValue>();
+
+            return new OpenXmlPresetGeometry(ShapeTypeValues.Wave, ImmutableArray.Create<AdjustValue>(
+                new AdjustValue("adj1", $"val {(long)adjust1}"),
+                new AdjustValue("adj2", $"val {(long)adjust2}")
+            ));
         }
 
         public ShapeTypeValues ShapeType => this.shapeType;

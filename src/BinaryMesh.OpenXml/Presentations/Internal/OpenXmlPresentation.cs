@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using DocumentFormat.OpenXml;
+using System.Threading.Tasks;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
-using Charts = DocumentFormat.OpenXml.Drawing.Charts;
+using Drawing = DocumentFormat.OpenXml.Drawing;
 
 using BinaryMesh.OpenXml.Helpers;
-using BinaryMesh.OpenXml.Spreadsheets;
-using System.Threading.Tasks;
+using BinaryMesh.OpenXml.Tables;
+using BinaryMesh.OpenXml.Tables.Internal;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
@@ -62,6 +62,8 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.presentationPart.Presentation.SlideIdList.Elements<SlideId>(),
             slideId => new OpenXmlSlide(this, this.presentationPart.GetPartById(slideId.RelationshipId) as SlidePart)
         );
+
+        public ITableStyleCollection TableStyles => new OpenXmlTableStyleCollection(this.GetTableStylesPart);
 
         public ISlide InsertSlide(ISlideLayout slideLayout)
         {
@@ -152,6 +154,18 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         {
             this.presentationDocument.Dispose();
             this.stream.Dispose();
+        }
+
+        private TableStylesPart GetTableStylesPart(bool create)
+        {
+            TableStylesPart part = this.presentationPart.GetPartsOfType<TableStylesPart>().FirstOrDefault();
+            if (part == null && create)
+            {
+                part = this.presentationPart.AddNewPartDefaultId<TableStylesPart>();
+                part.TableStyleList = new Drawing.TableStyleList();
+            }
+
+            return part;
         }
     }
 }

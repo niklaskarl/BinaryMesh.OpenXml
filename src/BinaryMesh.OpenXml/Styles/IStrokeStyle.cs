@@ -7,5 +7,9 @@ namespace BinaryMesh.OpenXml.Styles
         TFluent SetStroke(OpenXmlColor color);
 
         TFluent SetStrokeWidth(double pt);
+
+        TFluent RemoveStrokeDash();
+
+        TFluent SetStrokeDash(DocumentFormat.OpenXml.Drawing.PresetLineDashValues value);
     }
 }
