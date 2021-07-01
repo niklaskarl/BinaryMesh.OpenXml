@@ -43,6 +43,55 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return this;
         }
 
+        public ITableVisual SetHasFirstRow(bool value)
+        {
+            this.GetTableProperties(true).FirstRow = value;
+
+            return this;
+        }
+
+        public ITableVisual SetHasFirstColumn(bool value)
+        {
+            this.GetTableProperties(true).FirstColumn = value;
+
+            return this;
+        }
+
+        public ITableVisual SetHasLastRow(bool value)
+        {
+            this.GetTableProperties(true).LastRow = value;
+
+            return this;
+        }
+
+        public ITableVisual SetHasLastColumn(bool value)
+        {
+            this.GetTableProperties(true).LastColumn = value;
+
+            return this;
+        }
+
+        public ITableVisual SetHasBandRow(bool value)
+        {
+            this.GetTableProperties(true).BandRow = value;
+
+            return this;
+        }
+
+        public ITableVisual SetHasBandColumn(bool value)
+        {
+            this.GetTableProperties(true).BandColumn = value;
+
+            return this;
+        }
+
+        public ITableVisual SetIsRightToLeft(bool value)
+        {
+            this.GetTableProperties(true).RightToLeft = value;
+
+            return this;
+        }
+
         public ITableColumn AppendColumn(long width)
         {
             Drawing.GridColumn gridColumn = this.table.GetFirstChild<Drawing.TableGrid>().AppendChild(

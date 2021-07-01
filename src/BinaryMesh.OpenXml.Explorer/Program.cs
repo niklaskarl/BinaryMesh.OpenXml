@@ -261,7 +261,9 @@ namespace BinaryMesh.OpenXml.Explorer
 
                 ITableVisual table = tableSlide.ShapeTree.AppendTableVisual("Table 1")
                     .Transform.SetOffset(OpenXmlUnit.Cm(5), OpenXmlUnit.Cm(5))
-                    .SetStyle(tableStyle);
+                    .SetStyle(tableStyle)
+                    .SetHasFirstRow(true)
+                    .SetHasBandRow(true);
 
                 table.AppendColumn(OpenXmlUnit.Cm(5));
                 table.AppendColumn(OpenXmlUnit.Cm(5));

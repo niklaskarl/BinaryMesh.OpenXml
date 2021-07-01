@@ -18,6 +18,20 @@ namespace BinaryMesh.OpenXml.Presentations
 
         ITableVisual SetStyle(ITableStyle style);
 
+        ITableVisual SetHasFirstRow(bool value);
+
+        ITableVisual SetHasFirstColumn(bool value);
+
+        ITableVisual SetHasLastRow(bool value);
+
+        ITableVisual SetHasLastColumn(bool value);
+
+        ITableVisual SetHasBandRow(bool value);
+
+        ITableVisual SetHasBandColumn(bool value);
+
+        ITableVisual SetIsRightToLeft(bool value);
+
         ITableColumn AppendColumn(long width);
 
         ITableRow AppendRow(long height);
