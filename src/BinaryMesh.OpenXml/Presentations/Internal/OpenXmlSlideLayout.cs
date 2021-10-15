@@ -1,4 +1,5 @@
 using System;
+using BinaryMesh.OpenXml.Internal;
 using DocumentFormat.OpenXml.Packaging;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
@@ -14,6 +15,8 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.presentation = presentation;
             this.slideLayoutPart = slideLayoutPart;
         }
+
+        public IOpenXmlDocument Document => this.presentation;
 
         public OpenXmlPart Part => this.slideLayoutPart;
 

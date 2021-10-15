@@ -4,5 +4,6 @@ namespace BinaryMesh.OpenXml.Tables
 {
     public interface ITableRow
     {
+        OpenXmlSize Measure();
     }
 }

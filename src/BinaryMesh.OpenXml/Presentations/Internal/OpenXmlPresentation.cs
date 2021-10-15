@@ -7,13 +7,14 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Presentation;
 using Drawing = DocumentFormat.OpenXml.Drawing;
 
+using BinaryMesh.OpenXml.Internal;
 using BinaryMesh.OpenXml.Helpers;
 using BinaryMesh.OpenXml.Tables;
 using BinaryMesh.OpenXml.Tables.Internal;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
-    internal class OpenXmlPresentation : IOpenXmlPresentation, IPresentation, IDisposable
+    internal class OpenXmlPresentation : IOpenXmlPresentation, IPresentation, IOpenXmlDocument, IDisposable
     {
         private readonly Stream stream;
 
@@ -52,6 +53,10 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
         }
 
         public PresentationPart PresentationPart => this.presentationPart;
+
+        public IOpenXmlTextStyle DefaultTextStyle => new PresentationDefaultTextStyle(this);
+
+        public IOpenXmlTheme Theme => new OpenXmlTheme(this, this.presentationPart.ThemePart);
 
         public IReadOnlyList<ISlideMaster> SlideMasters => new EnumerableList<SlideMasterId, ISlideMaster>(
             this.presentationPart.Presentation.SlideMasterIdList.Elements<SlideMasterId>(),
@@ -166,6 +171,57 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             }
 
             return part;
+        }
+
+        private class PresentationDefaultTextStyle : IOpenXmlTextStyle
+        {
+            private OpenXmlPresentation presentation;
+
+            public PresentationDefaultTextStyle(OpenXmlPresentation presentation)
+            {
+                this.presentation = presentation;
+            }
+
+            public IOpenXmlParagraphTextStyle GetParagraphTextStyle(int level)
+            {
+                DefaultTextStyle style = this.presentation.presentationPart.Presentation.DefaultTextStyle;
+                Drawing.TextParagraphPropertiesType properties = null;
+                switch (level)
+                {
+                    case 0:
+                        properties = style.DefaultParagraphProperties;
+                        break;
+                    case 1:
+                        properties = style.Level1ParagraphProperties;
+                        break;
+                    case 2:
+                        properties = style.Level2ParagraphProperties;
+                        break;
+                    case 3:
+                        properties = style.Level3ParagraphProperties;
+                        break;
+                    case 4:
+                        properties = style.Level4ParagraphProperties;
+                        break;
+                    case 5:
+                        properties = style.Level5ParagraphProperties;
+                        break;
+                    case 6:
+                        properties = style.Level6ParagraphProperties;
+                        break;
+                    case 7:
+                        properties = style.Level7ParagraphProperties;
+                        break;
+                    case 8:
+                        properties = style.Level8ParagraphProperties;
+                        break;
+                    case 9:
+                        properties = style.Level9ParagraphProperties;
+                        break;
+                }
+
+                return new OpenXmlParagraphTextStyle(properties);
+            }
         }
     }
 }

@@ -1,10 +1,8 @@
 using System;
 using System.Linq;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Presentation;
-using Charts = DocumentFormat.OpenXml.Drawing.Charts;
 
-using BinaryMesh.OpenXml.Helpers;
+using BinaryMesh.OpenXml.Internal;
 
 namespace BinaryMesh.OpenXml.Presentations.Internal
 {
@@ -19,6 +17,8 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             this.presentation = presentation;
             this.slidePart = slidePart;
         }
+
+        public IOpenXmlDocument Document => this.presentation;
 
         public OpenXmlPart Part => this.slidePart;
 

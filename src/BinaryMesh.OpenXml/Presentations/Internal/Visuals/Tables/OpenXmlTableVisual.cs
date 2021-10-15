@@ -148,6 +148,21 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return new TableRow(this, tableRow);
         }
 
+        public OpenXmlSize Measure()
+        {
+            return new OpenXmlSize(this.MeasureWidth(), this.MeasureHeight());
+        }
+
+        public OpenXmlUnit MeasureWidth()
+        {
+            return this.Columns.Sum(c => (c as TableColumn).MeasureWidth());
+        }
+
+        public OpenXmlUnit MeasureHeight()
+        {
+            return this.Rows.Sum(c => (c as TableRow).MeasureHeight());
+        }
+
         private Drawing.TableProperties GetTableProperties(bool create)
         {
             Drawing.TableProperties result = this.table.TableProperties;
@@ -172,7 +187,39 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             return result;
         }
 
-        private sealed class TableColumn : ITableColumn
+        private int GetColumnIndex(Drawing.GridColumn gridColumn)
+        {
+            int i = 0;
+            foreach (Drawing.GridColumn column in this.table.GetFirstChild<Drawing.TableGrid>().Elements<Drawing.GridColumn>())
+            {
+                if (gridColumn == column)
+                {
+                    return i;
+                }
+
+                ++i;
+            }
+
+            return -1;
+        }
+
+        private int GetRowIndex(Drawing.TableRow tableRow)
+        {
+            int i = 0;
+            foreach (Drawing.TableRow row in this.table.Elements<Drawing.TableRow>())
+            {
+                if (tableRow == row)
+                {
+                    return i;
+                }
+
+                ++i;
+            }
+
+            return -1;
+        }
+
+        internal sealed class TableColumn : ITableColumn
         {
             private readonly OpenXmlTableVisual tableVisual;
 
@@ -183,9 +230,25 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 this.tableVisual = tableVisual;
                 this.gridColumn = gridColumn;
             }
+
+            public OpenXmlSize Measure()
+            {
+                return new OpenXmlSize(this.MeasureWidth(), this.MeasureHeight());
+            }
+
+            public OpenXmlUnit MeasureWidth()
+            {
+                return this.gridColumn.Width.Value;
+            }
+
+            public OpenXmlUnit MeasureHeight()
+            {
+                int column = this.tableVisual.GetColumnIndex(this.gridColumn);
+                return Enumerable.Range(0, this.tableVisual.Rows.Count - 1).Sum(row => this.tableVisual.Cells[column, row].Measure().Height);
+            }
         }
 
-        private sealed class TableRow : ITableRow
+        internal sealed class TableRow : ITableRow
         {
             private readonly OpenXmlTableVisual tableVisual;
 
@@ -195,6 +258,23 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
             {
                 this.tableVisual = tableVisual;
                 this.tableRow = tableRow;
+            }
+
+            public OpenXmlSize Measure()
+            {
+                return new OpenXmlSize(this.MeasureWidth(), this.MeasureHeight());
+            }
+
+            public OpenXmlUnit MeasureWidth()
+            {
+                return this.tableVisual.MeasureWidth();
+            }
+
+            public OpenXmlUnit MeasureHeight()
+            {
+                int row = this.tableVisual.GetRowIndex(this.tableRow);
+                long cellHeight = Enumerable.Range(0, this.tableVisual.Columns.Count - 1).Max(column => this.tableVisual.Cells[column, row].Measure().Height);
+                return this.tableRow.Height.HasValue ? Math.Max(cellHeight, this.tableRow.Height.Value) : cellHeight;
             }
         }
 
@@ -207,11 +287,18 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
                 this.tableVisual = tableVisual;
             }
 
-            public ITableCell this[int column, int row] =>
-                new OpenXmlTableCell(
-                    this.tableVisual,
-                    this.tableVisual.table.Elements<Drawing.TableRow>().ElementAt(row).Elements<Drawing.TableCell>().ElementAt(column)
-                );
+            public ITableCell this[int column, int row]
+            {
+                get
+                {
+                    Drawing.TableRow tableRow = this.tableVisual.table.Elements<Drawing.TableRow>().ElementAt(row);
+                    return new OpenXmlTableCell(
+                        this.tableVisual,
+                        tableRow,
+                        tableRow.Elements<Drawing.TableCell>().ElementAt(column)
+                    );
+                }
+            }
         }
     }
 }

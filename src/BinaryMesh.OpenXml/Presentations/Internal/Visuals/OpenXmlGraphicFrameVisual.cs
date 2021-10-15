@@ -21,6 +21,8 @@ namespace BinaryMesh.OpenXml.Presentations.Internal
 
         protected abstract TSelf Self { get; }
 
+        public IOpenXmlVisualContainer Container => this.container;
+
         public uint Id => this.graphicFrame.NonVisualGraphicFrameProperties?.NonVisualDrawingProperties?.Id;
 
         public string Name => this.graphicFrame.NonVisualGraphicFrameProperties?.NonVisualDrawingProperties?.Name;

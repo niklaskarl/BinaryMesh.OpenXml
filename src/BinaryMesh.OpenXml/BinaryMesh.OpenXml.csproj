@@ -7,7 +7,7 @@
   <PropertyGroup>
     <PackageId>BinaryMesh.OpenXml</PackageId>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>0.1.19-alpha</Version>
+    <Version>0.1.21-alpha</Version>
     <Authors>Niklas Karl</Authors>
     <Company>BinaryMesh</Company>
     <PackageTags>Office; OpenXML; Powerpoint; Excel; Word</PackageTags>
@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.12.1" />
+    <PackageReference Include="SixLabors.Fonts" Version="1.0.0-beta15" />
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
   </ItemGroup>
 

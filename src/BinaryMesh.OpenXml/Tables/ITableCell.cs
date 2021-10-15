@@ -9,5 +9,7 @@ namespace BinaryMesh.OpenXml.Tables
         IVisualStyle<ITableCell> Style { get; }
 
         ITextContent<ITableCell> Text { get; }
+
+        OpenXmlSize Measure();
     }
 }

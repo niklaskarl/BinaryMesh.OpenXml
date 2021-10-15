@@ -35,5 +35,7 @@ namespace BinaryMesh.OpenXml.Presentations
         ITableColumn AppendColumn(long width);
 
         ITableRow AppendRow(long height);
+
+        OpenXmlSize Measure();
     }
 }

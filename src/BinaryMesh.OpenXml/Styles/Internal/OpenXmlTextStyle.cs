@@ -40,6 +40,13 @@ namespace BinaryMesh.OpenXml.Styles.Internal
             return this.result;
         }
 
+        public double? GetFontSize()
+        {
+            OpenXmlElement textBody = this.element.GetTextBody();
+            Int32Value value = textBody.GetFirstChild<Paragraph>()?.GetFirstChild<ParagraphProperties>()?.GetFirstChild<DefaultRunProperties>()?.FontSize;
+            return (value?.HasValue ?? false) ? value.Value / 100.0 : (double?)null;
+        }
+
         public TFluent SetFont(string typeface)
         {
             OpenXmlElement textBody = this.element.GetOrCreateTextBody();
@@ -67,6 +74,12 @@ namespace BinaryMesh.OpenXml.Styles.Internal
             }
 
             return this.result;
+        }
+
+        public string GetFont()
+        {
+            OpenXmlElement textBody = this.element.GetTextBody();
+            return textBody.GetFirstChild<Paragraph>()?.GetFirstChild<ParagraphProperties>()?.GetFirstChild<DefaultRunProperties>()?.GetFirstChild<LatinFont>()?.Typeface;
         }
 
         public TFluent SetFontColor(OpenXmlColor color)
@@ -102,6 +115,13 @@ namespace BinaryMesh.OpenXml.Styles.Internal
             }
 
             return this.result;
+        }
+
+        public double? GetKerning()
+        {
+            OpenXmlElement textBody = this.element.GetTextBody();
+            Int32Value value = textBody.GetFirstChild<Paragraph>()?.GetFirstChild<ParagraphProperties>()?.GetFirstChild<DefaultRunProperties>()?.Kerning;
+            return (value?.HasValue ?? false) ? value.Value / 100.0 : (double?)null;
         }
 
         public TFluent SetTextAlign(TextAlignmentTypeValues align)
@@ -179,6 +199,19 @@ namespace BinaryMesh.OpenXml.Styles.Internal
             bodyProperties.BottomInset = (int)bottom;
 
             return this.result;
+        }
+
+        public OpenXmlMargin GetTextMargin()
+        {
+            OpenXmlElement textBody = this.element.GetTextBody();
+            BodyProperties bodyProperties = textBody.GetFirstChild<BodyProperties>();
+
+            return new OpenXmlMargin(
+                bodyProperties?.LeftInset ?? (long)OpenXmlUnit.Inch(0.1),
+                bodyProperties?.TopInset ?? (long)OpenXmlUnit.Inch(0.05),
+                bodyProperties?.RightInset ?? (long)OpenXmlUnit.Inch(0.1),
+                bodyProperties?.BottomInset ?? (long)OpenXmlUnit.Inch(0.05)
+            );
         }
     }
 }

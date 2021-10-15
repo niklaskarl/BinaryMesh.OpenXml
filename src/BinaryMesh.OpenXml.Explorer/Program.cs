@@ -265,15 +265,19 @@ namespace BinaryMesh.OpenXml.Explorer
                     .SetHasFirstRow(true)
                     .SetHasBandRow(true);
 
-                table.AppendColumn(OpenXmlUnit.Cm(5));
+                table.AppendColumn(OpenXmlUnit.Inch(1));
                 table.AppendColumn(OpenXmlUnit.Cm(5));
                 table.AppendRow(OpenXmlUnit.Cm(0));
                 table.AppendRow(OpenXmlUnit.Cm(0));
 
-                table.Cells[0, 0].Text.SetText("Hello")/*.Text.SetFontSize(8).Text.SetFont("Arial")*/;
+                table.Cells[0, 0].Text.SetText("Hello World")/*.Text.SetFontSize(28).Text.SetFont("Arial")*/;
                 table.Cells[1, 0].Text.SetText("World")/*.Text.SetIsBold(true).Text.SetFont("Comic Sans MS")*/;
                 table.Cells[0, 1].Text.SetText("ABC")/*.Text.SetFontColor(OpenXmlColor.Accent2)*/;
                 table.Cells[1, 1].Text.SetText("123")/*.Text.SetFontColor(OpenXmlColor.Rgb(25, 240, 120))*/;
+
+                OpenXmlSize rowSize = table.Rows[0].Measure();
+                OpenXmlSize columnSize = table.Columns[0].Measure();
+                OpenXmlSize tableSize = table.Measure();
 
                 using (Stream stream = new FileStream(destination, FileMode.Create, FileAccess.ReadWrite))
                 {

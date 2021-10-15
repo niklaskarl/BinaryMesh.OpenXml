@@ -34,6 +34,28 @@ namespace BinaryMesh.OpenXml.Styles.Internal
             return this.result;
         }
 
+        public TFluent SetPatternFill(DocumentFormat.OpenXml.Drawing.PresetPatternValues pattern, OpenXmlColor background, OpenXmlColor foreground)
+        {
+            OpenXmlElement fill = this.fillGenerator(true);
+            fill.RemoveAllChildren<NoFill>();
+            fill.RemoveAllChildren<SolidFill>();
+            fill.RemoveAllChildren<GradientFill>();
+            fill.RemoveAllChildren<BlipFill>();
+            fill.RemoveAllChildren<PatternFill>();
+            fill.RemoveAllChildren<GroupFill>();
+
+            fill.AppendChild(new PatternFill()
+            {
+                Preset = pattern,
+                BackgroundColor = new BackgroundColor()
+                    .AppendChildFluent(background.CreateColorElement()),
+                ForegroundColor = new ForegroundColor()
+                    .AppendChildFluent(foreground.CreateColorElement()),
+            });
+
+            return this.result;
+        }
+
         public TFluent SetNoFill()
         {
             OpenXmlElement fill = this.fillGenerator(true);
