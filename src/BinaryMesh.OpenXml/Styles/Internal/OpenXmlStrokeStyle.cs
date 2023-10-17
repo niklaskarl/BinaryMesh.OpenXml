@@ -19,6 +19,23 @@ namespace BinaryMesh.OpenXml.Styles.Internal
             this.outlineGenerator = outlineGenerator;
         }
 
+        public TFluent SetNoStroke()
+        {
+            Outline outline = this.outlineGenerator(true);
+            this.InitializeOutline(outline);
+
+            outline.RemoveAllChildren<NoFill>();
+            outline.RemoveAllChildren<SolidFill>();
+            outline.RemoveAllChildren<GradientFill>();
+            outline.RemoveAllChildren<BlipFill>();
+            outline.RemoveAllChildren<PatternFill>();
+            outline.RemoveAllChildren<GroupFill>();
+
+            outline.AppendChild(new NoFill());
+
+            return this.result;
+        }
+
         public TFluent SetStroke(OpenXmlColor color)
         {
             Outline outline = this.outlineGenerator(true);

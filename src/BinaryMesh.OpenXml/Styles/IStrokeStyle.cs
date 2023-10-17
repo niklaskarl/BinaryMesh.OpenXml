@@ -4,6 +4,8 @@ namespace BinaryMesh.OpenXml.Styles
 {
     public interface IStrokeStyle<out TFluent>
     {
+        TFluent SetNoStroke();
+
         TFluent SetStroke(OpenXmlColor color);
 
         TFluent SetStrokeWidth(double pt);

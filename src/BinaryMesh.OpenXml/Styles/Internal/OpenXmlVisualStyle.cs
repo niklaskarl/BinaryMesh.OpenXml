@@ -72,6 +72,22 @@ namespace BinaryMesh.OpenXml.Styles.Internal
             return this.result;
         }
 
+        public TFluent SetNoStroke()
+        {
+            OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
+            Outline outline = shapeProperties.GetFirstChild<Outline>() ?? shapeProperties.AppendChild(new Outline() { Width = 12700 });
+            outline.RemoveAllChildren<NoFill>();
+            outline.RemoveAllChildren<SolidFill>();
+            outline.RemoveAllChildren<GradientFill>();
+            outline.RemoveAllChildren<BlipFill>();
+            outline.RemoveAllChildren<PatternFill>();
+            outline.RemoveAllChildren<GroupFill>();
+
+            outline.AppendChild(new NoFill());
+
+            return this.result;
+        }
+
         public TFluent SetStroke(OpenXmlColor color)
         {
             OpenXmlElement shapeProperties = this.element.GetOrCreateShapeProperties();
