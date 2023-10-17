@@ -28,6 +28,14 @@ namespace BinaryMesh.OpenXml.Charts.Internal
             lineChartSeries => new OpenXmlLineChartSeries(lineChartSeries)
         );
 
+        public ILineChart SetGrouping(LineChartGrouping grouping)
+        {
+            Grouping lineGrouping = this.lineChart.GetFirstChild<Grouping>() ?? this.lineChart.AppendChild(new Grouping());
+            lineGrouping.Val = (GroupingValues)grouping;
+
+            return this;
+        }
+
         public ILineChart InitializeFromRange(IRange labelRange, IRange categoryRange)
         {
             uint orderStart = (uint)this.chartSpace.Charts.TakeWhile(c => c != this).Sum(c => c.SeriesCount);
