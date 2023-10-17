@@ -11,5 +11,7 @@ namespace BinaryMesh.OpenXml.Spreadsheets
         IRange GetRange(string formula);
 
         IRange GetRange(uint startColumn, uint startRow, uint endColumn, uint endRow);
+
+        IRowIterator OpenRowIterator(uint initialColumnIndex, uint initialRowIndex);
     }
 }
